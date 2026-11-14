@@ -1,0 +1,125 @@
+---
+/* ============================================================================
+ * DIRECTION — "Label" · /label/
+ *
+ * Closest to the north star: the site IS Goldsholl's parcel label for Paul
+ * Theobald and Company. Printed letterhead, one red hairline rule, content
+ * typed onto the form in a loose stagger, deadpan small print. The quietest
+ * direction: black ink on warm paper, pen blue for links and hand fill-ins,
+ * red only for the rule and the editor's margin notes.
+ *
+ * Order (narrative): hero + subhead → startup to scaleup with the curve →
+ * the two voices → people and trust → why this one → a coalition, not a
+ * company → connect → footer disclaimer. No call to action, no form.
+ *
+ * Every line of copy comes from src/lib/site.ts and src/content/. Strings
+ * authored here are page furniture only: "Fig. 1", "Encl.:",
+ * "Mandatory Reading.", "Postmaster:", "Directions".
+ * ========================================================================== */
+import BaseThemeLayout from '@layouts/BaseThemeLayout.astro';
+import Letterhead from '@components/label/Letterhead.astro';
+import AddressBlock from '@components/label/AddressBlock.astro';
+import TypedEntry from '@components/label/TypedEntry.astro';
+import Curve from '@components/label/Curve.astro';
+import Voices from '@components/label/Voices.astro';
+import Signatures from '@components/label/Signatures.astro';
+import Enclosures from '@components/label/Enclosures.astro';
+import SmallPrint from '@components/label/SmallPrint.astro';
+import { BRAND, PEOPLE, CONNECT } from '@lib/site';
+import { getReading } from '@lib/reading';
+import { getCollection } from 'astro:content';
+
+const sections = (await getCollection('sections')).sort((a, b) => a.data.order - b.data.order);
+const bySlug = (slug: string) => sections.find((s) => s.data.slug_id === slug);
+const scaleup = bySlug('scaleup');
+const trust = bySlug('trust');
+const why = bySlug('why');
+const coalition = bySlug('coalition');
+
+const voices = (await getCollection('voices'))
+  .sort((a, b) => a.data.order - b.data.order)
+  .map((v) => ({ ...v.data, body: v.body }));
+
+const reading = (await getReading()).map((r) => ({
+  title: r.data.title,
+  href: `/label/reading/${r.id}/`,
+}));
+---
+
+<BaseThemeLayout title={`${BRAND.name}: Label`} theme="label" mode="light">
+  <Letterhead />
+
+  <main id="main" class="lb-page">
+    <AddressBlock text={BRAND.subhead} />
+
+    {scaleup && (
+      <TypedEntry
+        id={scaleup.data.slug_id}
+        eyebrow={scaleup.data.eyebrow}
+        title={scaleup.data.title}
+        lead={scaleup.data.lead}
+        body={scaleup.body}
+        note={scaleup.data.editor_note}
+        noteTilt={-4}
+      >
+        <Curve slot="figure" />
+      </TypedEntry>
+    )}
+
+    <Voices voices={voices} />
+
+    {trust && (
+      <TypedEntry
+        id={trust.data.slug_id}
+        eyebrow={trust.data.eyebrow}
+        title={trust.data.title}
+        lead={trust.data.lead}
+        body={trust.body}
+        note={trust.data.editor_note}
+        indent={1}
+        noteTilt={3}
+      >
+        <Signatures people={PEOPLE} />
+      </TypedEntry>
+    )}
+
+    {why && (
+      <TypedEntry
+        id={why.data.slug_id}
+        eyebrow={why.data.eyebrow}
+        title={why.data.title}
+        lead={why.data.lead}
+        body={why.body}
+        note={why.data.editor_note}
+        noteTilt={-3}
+      />
+    )}
+
+    {coalition && (
+      <TypedEntry
+        id={coalition.data.slug_id}
+        eyebrow={coalition.data.eyebrow}
+        title={coalition.data.title}
+        lead={coalition.data.lead}
+        body={coalition.body}
+        note={coalition.data.editor_note}
+        indent={2}
+      />
+    )}
+
+    <Enclosures connect={CONNECT} reading={reading} />
+  </main>
+
+  <div class="lb-page lb-page--foot">
+    <SmallPrint />
+  </div>
+</BaseThemeLayout>
+
+<style>
+  .lb-page {
+    display: block;
+    max-width: calc(var(--page-measure) + 14rem);
+    margin: 0 auto;
+    padding: 0 var(--page-gutter);
+  }
+</style>

@@ -1,0 +1,33 @@
+---
+/* EditorNote — a note in the editor's red pen, written in the margin.
+ * The humor channel, and scarce: at most one per section. Sits in the right
+ * margin on wide screens and under the typed entry on narrow ones.
+ * Reads: --font-hand, --color-editor-red.
+ */
+export interface Props { text: string; tilt?: number }
+const { text, tilt = -3 } = Astro.props;
+---
+
+<aside class="lb-note" style={`--tilt:${tilt}deg`}>
+  <span class="sr-only">Editor's note: </span>
+  <svg class="lb-note__tick ink-ballpoint" viewBox="0 0 40 14" aria-hidden="true" focusable="false">
+    <path d="M2 9 C 10 3, 22 12, 38 4" />
+  </svg>
+  <p>{text}</p>
+</aside>
+
+<style>
+  .lb-note {
+    color: var(--color-editor-red);
+    font-family: var(--font-hand);
+    font-weight: 500;
+    font-size: 1.22rem;
+    line-height: 1.12;
+    transform: rotate(var(--tilt));
+    transform-origin: left top;
+    max-width: 13rem;
+  }
+  .lb-note p { margin: 0.1rem 0 0; }
+  .lb-note__tick { width: 2.2rem; height: auto; display: block; }
+  .lb-note__tick path { fill: none; stroke: var(--color-editor-red); stroke-width: 1.6; stroke-linecap: round; }
+</style>

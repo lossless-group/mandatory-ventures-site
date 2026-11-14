@@ -1,0 +1,60 @@
+---
+/* LabelMark — the one small, witty mark in the letterhead, after Goldsholl's
+ * book-and-nib for Paul Theobald: line drawing, one solid black shape, one
+ * red gesture.
+ *
+ * Here: an open ledger (one page in fine hatching, one page ruled), a rubber
+ * stamp standing on it as a flat solid silhouette, and the editor's red
+ * scribble loose above. A mandate, stamped. Decorative; aria-hidden.
+ * Reads: --color-text, --color-text-faint, --color-editor-red.
+ */
+---
+
+<svg class="lb-mark" viewBox="0 0 120 140" aria-hidden="true" focusable="false">
+  <defs>
+    <pattern id="lb-hatch" patternUnits="userSpaceOnUse" width="2.6" height="2.6" patternTransform="rotate(78)">
+      <line x1="0" y1="0" x2="0" y2="2.6" class="lb-mark__hatch" />
+    </pattern>
+  </defs>
+
+  <!-- ledger: hatched left page, ruled right page -->
+  <g class="ink-typewriter">
+    <polygon points="10,70 58,80 58,134 10,124" fill="url(#lb-hatch)" />
+    <polygon points="10,70 58,80 58,134 10,124" class="lb-mark__edge" />
+    <polygon points="58,80 108,70 108,124 58,134" class="lb-mark__edge" />
+    <line x1="63" y1="93"  x2="103" y2="85"  class="lb-mark__ruling" />
+    <line x1="63" y1="101" x2="103" y2="93"  class="lb-mark__ruling" />
+    <line x1="63" y1="109" x2="103" y2="101" class="lb-mark__ruling" />
+    <line x1="63" y1="117" x2="103" y2="109" class="lb-mark__ruling" />
+    <line x1="63" y1="125" x2="90"  y2="120" class="lb-mark__ruling" />
+  </g>
+
+  <!-- rubber stamp: flat silhouette, no outline -->
+  <g class="lb-mark__solid">
+    <ellipse cx="84" cy="40" rx="9.5" ry="8.5" />
+    <path d="M80 47 h8 l1.2 18 h-10.4 z" />
+    <path d="M71 64 h26 l2.5 12 l-31 6 z" />
+  </g>
+
+  <!-- the editor's scribble -->
+  <path
+    class="lb-mark__scribble ink-ballpoint"
+    d="M30 44 c-9 -3 -13 -14 -5 -20 c8 -6 19 -1 18 8 c-1 9 -14 11 -18 4 c-3 -6 3 -12 9 -10 c6 2 5 10 -1 10
+       M30 44 c2 6 4 12 9 18 M36 54 c4 -3 9 -3 11 0"
+  />
+</svg>
+
+<style>
+  .lb-mark { display: block; width: 100%; height: auto; overflow: visible; }
+  .lb-mark__hatch { stroke: var(--color-text); stroke-width: 0.75; }
+  .lb-mark__edge { fill: none; stroke: var(--color-text); stroke-width: 0.9; stroke-linejoin: round; }
+  .lb-mark__ruling { stroke: var(--color-text-faint); stroke-width: 0.6; }
+  .lb-mark__solid { fill: var(--color-text); }
+  .lb-mark__scribble {
+    fill: none;
+    stroke: var(--color-editor-red);
+    stroke-width: 1.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+</style>

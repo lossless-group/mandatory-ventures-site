@@ -1,0 +1,26 @@
+---
+/* The press colour bar along the trim: solid and 50% screen patches for
+ * each ink on this job. Black, red, blue, teal. That's all the inks there
+ * are; it's the budget showing. Decorative. */
+const inks = ['k', 'r', 'b', 't'];
+---
+<span class="pu-bar" aria-hidden="true">
+  {inks.map((ink) => (<><i class={`solid ${ink}`}></i><i class={`screen ${ink}`}></i></>))}
+  <i class="paper"></i>
+</span>
+<style>
+  .pu-bar { display: inline-flex; border: 1px solid var(--color-board-ink); }
+  i { display: block; width: 18px; height: 14px; border-right: 1px solid var(--color-board-ink); }
+  i:last-child { border-right: 0; }
+  .k { --ink: var(--color-cutout); }
+  .r { --ink: var(--color-editor-red); }
+  .b { --ink: var(--color-marker-blue); }
+  .t { --ink: var(--color-halftone); }
+  .solid { background: var(--ink); }
+  .screen {
+    background-color: var(--color-surface);
+    background-image: radial-gradient(circle, var(--ink) 40%, transparent 43%);
+    background-size: 4px 4px;
+  }
+  .paper { background: var(--color-surface); }
+</style>

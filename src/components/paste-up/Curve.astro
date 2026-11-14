@@ -1,0 +1,156 @@
+---
+/* The curve from the decks, redrawn as a chart on the board.
+ *   typewriter layer — frame, grid, ticks, axis labels (black, typed)
+ *   screen layer     — area under the curve as a coarse teal dot screen
+ *   marker layer     — the curve itself, one felt-tip stroke in marker blue
+ * Annotations are CURVE.points verbatim. The last one is the joke, so it is
+ * the only one in red. On a phone they drop under the chart as a list. */
+import { CURVE } from '../../lib/site';
+
+const W = 640, H = 360;
+const x0 = 64, x1 = 604, yb = 304, yt = 36;
+const k = 4.1;
+const f = (t: number) => (Math.exp(k * t) - 1) / (Math.exp(k) - 1);
+const px = (t: number) => x0 + t * (x1 - x0);
+const py = (t: number) => yb - f(t) * (yb - yt);
+
+const steps = 48;
+const pts = Array.from({ length: steps + 1 }, (_, i) => i / steps).map((t) => [px(t), py(t)]);
+const line = 'M' + pts.map(([x, y]) => `${x.toFixed(1)} ${y.toFixed(1)}`).join(' L');
+const area = `${line} L${x1} ${yb} L${x0} ${yb} Z`;
+
+/* label placement, as % of the frame; each sits in the empty upper-left */
+const place = [
+  { dx: 2, dy: -20, anchor: 'start' },
+  { dx: -2, dy: -22, anchor: 'end' },
+  { dx: -5, dy: -6, anchor: 'end' },
+];
+const notes = CURVE.points.map((p, i) => ({
+  ...p,
+  n: i + 1,
+  cx: px(p.at),
+  cy: py(p.at),
+  left: ((px(p.at) / W) * 100 + place[i].dx).toFixed(1),
+  top: ((py(p.at) / H) * 100 + place[i].dy).toFixed(1),
+  anchor: place[i].anchor,
+  joke: i === CURVE.points.length - 1,
+}));
+const gridY = [0.25, 0.5, 0.75].map((g) => yb - g * (yb - yt));
+const gridX = [0.25, 0.5, 0.75].map((g) => x0 + g * (x1 - x0));
+---
+<figure class="pu-curve" aria-label={`Chart: ${CURVE.title} A slow start, then a steep climb.`}>
+  <div class="frame">
+    <svg viewBox={`0 0 ${W} ${H}`} aria-hidden="true" focusable="false">
+      <defs>
+        <pattern id="pu-curve-screen" width="9" height="9" patternUnits="userSpaceOnUse" patternTransform="rotate(15)">
+          <circle cx="4.5" cy="4.5" r="2.3" class="dot" />
+        </pattern>
+        <linearGradient id="pu-curve-fade" x1="0" x2="1" y1="0" y2="0">
+          <stop offset="0" stop-color="white" stop-opacity="0.25" />
+          <stop offset="1" stop-color="white" stop-opacity="1" />
+        </linearGradient>
+        <mask id="pu-curve-mask"><rect width={W} height={H} fill="url(#pu-curve-fade)" /></mask>
+      </defs>
+      <g class="ink-typewriter type">
+        {gridY.map((y) => <line x1={x0} x2={x1} y1={y} y2={y} class="grid" />)}
+        {gridX.map((x) => <line x1={x} x2={x} y1={yt} y2={yb} class="grid" />)}
+        <path d={`M${x0} ${yt - 14} L${x0} ${yb} L${x1 + 14} ${yb}`} class="axis" />
+        <path d={`M${x0 - 5} ${yt - 6} L${x0} ${yt - 16} L${x0 + 5} ${yt - 6} M${x1 + 6} ${yb - 5} L${x1 + 16} ${yb} L${x1 + 6} ${yb + 5}`} class="axis" />
+        {[0.2, 0.4, 0.6, 0.8].map((g) => <line x1={x0 + g * (x1 - x0)} x2={x0 + g * (x1 - x0)} y1={yb} y2={yb + 7} class="axis" />)}
+      </g>
+      <path d={area} fill="url(#pu-curve-screen)" mask="url(#pu-curve-mask)" class="screen" />
+      <path d={line} class="marker ink-marker" />
+      {notes.map((n) => (
+        <g class:list={['pin', n.joke && 'joke']}>
+          <circle cx={n.cx} cy={n.cy} r="7" />
+          <text x={n.cx + (n.n === 1 ? -4 : 12)} y={n.cy + (n.n === 1 ? -14 : 6)}>{n.n}</text>
+        </g>
+      ))}
+    </svg>
+    <span class="ylab">↑ {CURVE.y_label}</span>
+    <span class="xlab">{CURVE.x_label} →</span>
+  </div>
+  <ol class="notes">
+    {notes.map((n) => (
+      <li class:list={[n.joke && 'joke', `a-${n.anchor}`]} style={`--x:${n.left}%;--y:${n.top}%`}>
+        <span class="n" aria-hidden="true">{n.n}</span>{n.label}
+      </li>
+    ))}
+  </ol>
+</figure>
+
+<style>
+  .pu-curve { margin: 0; position: relative; }
+  .frame { position: relative; padding: 1.6rem 0 1.9rem 0; }
+  svg { display: block; width: 100%; height: auto; overflow: visible; }
+  .type { stroke: var(--color-text); fill: none; }
+  .axis { stroke-width: 2; stroke-linecap: square; }
+  .grid { stroke: var(--color-text-faint); stroke-width: 1; stroke-dasharray: 2 5; }
+  .dot { fill: var(--color-halftone); }
+  /* on the slip it is always ink on paper, so always multiply */
+  .screen { mix-blend-mode: multiply; }
+  .marker {
+    fill: none;
+    stroke: var(--color-marker-blue);
+    stroke-width: 7;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    opacity: 0.92;
+  }
+  .pin circle { fill: var(--color-surface); stroke: var(--color-pen-blue); stroke-width: 2.5; }
+  .pin text { font-family: var(--font-data); font-size: 18px; fill: var(--color-pen-blue); font-weight: 700; }
+  .pin.joke circle { stroke: var(--color-editor-red); }
+  .pin.joke text { fill: var(--color-editor-red); }
+  .ylab, .xlab {
+    position: absolute;
+    font-family: var(--font-data);
+    font-size: 0.82rem;
+    letter-spacing: 0.04em;
+    color: var(--color-text);
+  }
+  .ylab { top: 0; left: 0; }
+  .xlab { bottom: 0; right: 0; }
+  .notes {
+    list-style: none;
+    margin: 0.6rem 0 0;
+    padding: 0;
+    display: grid;
+    gap: 0.35rem;
+    font-family: var(--font-hand);
+    font-weight: 700;
+    font-size: 1.3rem;
+    line-height: 1.05;
+    color: var(--color-pen-blue);
+  }
+  .notes .n {
+    display: inline-grid;
+    place-items: center;
+    width: 1.3rem; height: 1.3rem;
+    margin-right: 0.4rem;
+    border: 1.5px solid currentColor;
+    border-radius: 50%;
+    font-family: var(--font-data);
+    font-size: 0.75rem;
+    vertical-align: 0.15em;
+  }
+  .notes .joke { color: var(--color-editor-red); }
+  @media (min-width: 760px) {
+    .notes {
+      position: absolute;
+      inset: 1.6rem 0 1.9rem 0;
+      margin: 0;
+      display: block;
+      pointer-events: none;
+    }
+    .notes li {
+      position: absolute;
+      left: var(--x);
+      top: var(--y);
+      width: max-content;
+      max-width: 13rem;
+      transform: rotate(-2deg);
+    }
+    .notes li.a-end { transform: translateX(-100%) rotate(-2deg); text-align: right; }
+    .notes .n { display: none; }
+  }
+</style>

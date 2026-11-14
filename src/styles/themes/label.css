@@ -1,0 +1,151 @@
+/* ============================================================================
+ * DIRECTION — "Label" · theme slug `label`
+ *
+ * TIER 2 semantic tokens. kebab-case only. Tier 1 `--color__*` / `--font__*`
+ * live in global.css and are referenced ONLY from inside this file.
+ *
+ * The premise: the whole site is Goldsholl's parcel label for Paul Theobald
+ * and Company. A printed letterhead (lowercase italic serif, one witty mark,
+ * spaced geometric caps for the hard facts), one red hairline rule, typed
+ * content below in a loose stagger, and deadpan official small print. The
+ * quietest of the three directions: almost no flair, lots of paper.
+ *
+ * Three voices of type, each with one job:
+ *   --font-display  lowercase italic serif (name, promise, takeaways)
+ *   --font-eyebrow  small spaced geometric caps (hard facts, small print)
+ *   --font-body     typewriter (everything typed onto the form)
+ *   --font-data     a fainter typewriter (addressee block, chart frame)
+ *   --font-hand     ballpoint / red-pen hand (annotations, editor's notes)
+ *   --font-lockup   the geometric caps of the facts line
+ *
+ * Mode intent
+ *   light   — the label itself: warm off-white stock, black ink, one red.
+ *   dark    — the same label on carbon stock, read under a desk lamp.
+ *   vibrant — DARK-BASED. The label screen-printed in cream ink on a dark
+ *             green-slate cover stock (a Nitsche band, deepened), with gold
+ *             marker. Every ground, surface, text and border set explicitly.
+ * ========================================================================== */
+
+[data-theme="label"] {
+  --font-display:  var(--font__bodoni);
+  --font-body:     var(--font__courier-prime);
+  --font-data:     var(--font__cutive-mono);
+  --font-eyebrow:  var(--font__jost);
+  --font-hand:     var(--font__caveat);
+  --font-lockup:   var(--font__jost);
+
+  --radius-control: 0;
+  --page-measure:   46rem;
+  --page-gutter:    clamp(1rem, 5vw, 3.5rem);
+
+  --fx-rough-scale: 1;
+  --fx-misregister: 0px;   /* the label prints in register; no misregistration */
+}
+
+/* --------------------------------------------------------------- light --- */
+[data-theme="label"][data-mode="light"] {
+  --color-background:     var(--color__paper-bone);
+  --color-surface:        var(--color__paper-foxed);
+  --color-surface-raised: var(--color__atomic-cream);
+
+  --color-text:           var(--color__typewriter-black);
+  --color-text-muted:     color-mix(in srgb, var(--color__typewriter-black) 74%, var(--color__paper-foxed));
+  --color-text-faint:     color-mix(in srgb, var(--color__typewriter-black) 52%, var(--color__paper-foxed));
+
+  --color-primary:        var(--color__typewriter-black);
+  --color-primary-soft:   color-mix(in srgb, var(--color__typewriter-black) 9%, transparent);
+  --color-accent:         var(--color__pen-blue);
+
+  --color-pen-blue:       var(--color__pen-blue);
+  --color-marker-blue:    var(--color__marker-blue);
+  --color-editor-red:     var(--color__fusion-red);
+
+  --color-band-1:         var(--color__deep-slate);
+  --color-band-2:         var(--color__mauve-grey);
+  --color-band-3:         var(--color__sage-band);
+  --color-band-4:         var(--color__teal-band);
+
+  --color-border:         color-mix(in srgb, var(--color__typewriter-black) 22%, transparent);
+  --color-rule:           var(--color__fusion-red);
+  --color-grid:           color-mix(in srgb, var(--color__typewriter-black) 10%, transparent);
+
+  --fx-grain-opacity:     0.08;
+}
+
+/* ---------------------------------------------------------------- dark --- */
+[data-theme="label"][data-mode="dark"] {
+  --color-background:     var(--color__carbon);
+  --color-surface:        var(--color__carbon-raised);
+  --color-surface-raised: color-mix(in srgb, var(--color__carbon-raised) 80%, var(--color__cream-lit));
+
+  --color-text:           var(--color__cream-lit);
+  --color-text-muted:     color-mix(in srgb, var(--color__cream-lit) 74%, var(--color__carbon));
+  --color-text-faint:     color-mix(in srgb, var(--color__cream-lit) 52%, var(--color__carbon));
+
+  --color-primary:        var(--color__cream-lit);
+  --color-primary-soft:   color-mix(in srgb, var(--color__cream-lit) 10%, transparent);
+  --color-accent:         var(--color__blue-lit);
+
+  --color-pen-blue:       var(--color__blue-lit);
+  --color-marker-blue:    var(--color__marker-lit);
+  --color-editor-red:     var(--color__red-lit);
+
+  --color-band-1:         var(--color__carbon-line);
+  --color-band-2:         var(--color__mauve-grey);
+  --color-band-3:         var(--color__sage-band);
+  --color-band-4:         var(--color__teal-band);
+
+  --color-border:         var(--color__carbon-line);
+  --color-rule:           var(--color__red-lit);
+  --color-grid:           color-mix(in srgb, var(--color__cream-lit) 9%, transparent);
+
+  --fx-grain-opacity:     0.05;
+}
+
+/* ------------------------------------------------------------- vibrant --- */
+/* Cream ink screen-printed on dark green-slate cover stock. Still printed:
+ * flat inks, no glow. Distinct from dark by its ground and its gold marker. */
+[data-theme="label"][data-mode="vibrant"] {
+  --color-background:     color-mix(in srgb, var(--color__band-ink) 58%, var(--color__carbon));
+  --color-surface:        color-mix(in srgb, var(--color__band-ink) 72%, var(--color__carbon));
+  --color-surface-raised: color-mix(in srgb, var(--color__teal-band) 60%, var(--color__carbon));
+
+  --color-text:           var(--color__atomic-cream);
+  --color-text-muted:     color-mix(in srgb, var(--color__atomic-cream) 78%, var(--color__band-ink));
+  --color-text-faint:     color-mix(in srgb, var(--color__atomic-cream) 58%, var(--color__band-ink));
+
+  --color-primary:        var(--color__atomic-cream);
+  --color-primary-soft:   color-mix(in srgb, var(--color__atomic-cream) 12%, transparent);
+  --color-accent:         var(--color__aged-gold);
+
+  --color-pen-blue:       color-mix(in srgb, var(--color__blue-lit) 70%, var(--color__atomic-cream));
+  --color-marker-blue:    var(--color__aged-gold);
+  --color-editor-red:     color-mix(in srgb, var(--color__red-lit) 82%, var(--color__atomic-cream));
+
+  --color-band-1:         var(--color__deep-slate);
+  --color-band-2:         var(--color__mauve-grey);
+  --color-band-3:         var(--color__sage-lit);
+  --color-band-4:         var(--color__aged-gold);
+
+  --color-border:         color-mix(in srgb, var(--color__atomic-cream) 26%, transparent);
+  --color-rule:           color-mix(in srgb, var(--color__red-lit) 82%, var(--color__atomic-cream));
+  --color-grid:           color-mix(in srgb, var(--color__atomic-cream) 12%, transparent);
+
+  --fx-grain-opacity:     0.07;
+}
+
+/* ============================================================================
+ * Shared chrome restyled into the label's voice (reads Tier 2 only).
+ * ========================================================================== */
+[data-theme="label"] .theme-mode-toggle {
+  width: 1.9rem;
+  height: 1.9rem;
+  padding: 0.3rem;
+  border-radius: var(--radius-control);
+  border-color: var(--color-border);
+  color: var(--color-text-muted);
+}
+[data-theme="label"] .theme-mode-toggle:hover {
+  color: var(--color-text);
+  border-color: var(--color-text);
+}

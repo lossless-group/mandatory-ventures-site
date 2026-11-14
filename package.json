@@ -1,0 +1,30 @@
+{
+  "name": "mandatory-ventures",
+  "type": "module",
+  "version": "0.1.0",
+  "private": true,
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check",
+    "astro": "astro",
+    "check:words": "node scripts/check-word-budget.mjs"
+  },
+  "dependencies": {
+    "@lossless-group/lfm": "npm:@jsr/lossless-group__lfm@0.7.0",
+    "astro": "^7.2.8",
+    "mdast-util-to-string": "^4.0.0"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.10",
+    "@tailwindcss/vite": "^4.3.3",
+    "@types/mdast": "^4.0.4",
+    "@types/node": "^25.6.0",
+    "tailwindcss": "^4.3.3",
+    "typescript": "^6.0.3"
+  }
+}

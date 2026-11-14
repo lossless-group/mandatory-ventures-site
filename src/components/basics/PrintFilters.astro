@@ -1,0 +1,48 @@
+---
+/* ============================================================================
+ * PrintFilters — the shared SVG filter defs behind .ink-typewriter,
+ * .ink-marker, .ink-ballpoint and .ink-spread in global.css. Mounted once by
+ * BoilerPlateHTML. Shared by all three directions; never forked per direction.
+ *
+ * Each is a feTurbulence + feDisplacementMap roughen at a LOW scale: a line
+ * that is slightly unsure of itself, the way a struck ribbon, a felt tip or a
+ * ballpoint actually puts ink on paper.
+ * ========================================================================== */
+---
+
+<svg class="print-filters" width="0" height="0" aria-hidden="true" focusable="false">
+  <defs>
+    <!-- Typewriter: soft, slightly uneven edges, as from a struck ribbon. -->
+    <filter id="ink-typewriter" x="-5%" y="-20%" width="110%" height="140%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="3" result="t" />
+      <feDisplacementMap in="SourceGraphic" in2="t" scale="1.2" xChannelSelector="R" yChannelSelector="G" result="d" />
+      <feGaussianBlur in="d" stdDeviation="0.25" />
+    </filter>
+    <!-- Felt-tip marker: wider wobble, a little bleed. -->
+    <filter id="ink-marker" x="-5%" y="-20%" width="110%" height="140%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="7" result="w" />
+      <feDisplacementMap in="SourceGraphic" in2="w" scale="3.5" xChannelSelector="R" yChannelSelector="G" result="d" />
+      <feTurbulence type="fractalNoise" baseFrequency="1.4" numOctaves="1" seed="2" result="g" />
+      <feDisplacementMap in="d" in2="g" scale="1.4" xChannelSelector="R" yChannelSelector="G" />
+    </filter>
+    <!-- Ballpoint: thin and a little skippy. -->
+    <filter id="ink-ballpoint" x="-5%" y="-20%" width="110%" height="140%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.05" numOctaves="1" seed="11" result="w" />
+      <feDisplacementMap in="SourceGraphic" in2="w" scale="1.8" xChannelSelector="R" yChannelSelector="G" result="d" />
+      <feTurbulence type="fractalNoise" baseFrequency="2.2" numOctaves="1" seed="5" result="skip" />
+      <feComponentTransfer in="skip" result="mask">
+        <feFuncA type="discrete" tableValues="0.55 1 1 1 1" />
+      </feComponentTransfer>
+      <feComposite in="d" in2="mask" operator="in" />
+    </filter>
+    <!-- Ink spread: small type filling in on soft stock. -->
+    <filter id="ink-spread">
+      <feMorphology operator="dilate" radius="0.25" />
+      <feGaussianBlur stdDeviation="0.2" />
+    </filter>
+  </defs>
+</svg>
+
+<style>
+  .print-filters { position: absolute; width: 0; height: 0; overflow: hidden; }
+</style>

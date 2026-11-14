@@ -1,0 +1,259 @@
+---
+/* ============================================================================
+ * DIRECTION `report` — "Annual Report"
+ *
+ * The site as a 1960s corporate annual report: a Nitsche banded cover with
+ * the name in extended caps along the bottom edge; the curve as the
+ * "five years" chart (typewriter frame, felt-tip data) facing a Northwest
+ * ruled ledger; the two voices as a two-column letter; people and trust as
+ * the officers page; a Central 1966 silhouette plate facing one narrow
+ * column; a Nitsche overprint plate for the coalition; Mandatory Reading as
+ * a loose insert; the back cover carries connect and the disclaimer.
+ *
+ * Every line of copy comes from src/lib/site.ts and src/content/. The only
+ * words added are furniture: section numerals, folios, "Report to
+ * stockholders", "Letter to stockholders", "Officers", the ledger's caption
+ * and column heads.
+ * ========================================================================== */
+import { getCollection, render } from 'astro:content';
+import BaseThemeLayout from '../../layouts/BaseThemeLayout.astro';
+import ReportCover from '../../components/report/ReportCover.astro';
+import RunningHead from '../../components/report/RunningHead.astro';
+import ReportColumn from '../../components/report/ReportColumn.astro';
+import CurveChart from '../../components/report/CurveChart.astro';
+import Ledger from '../../components/report/Ledger.astro';
+import VoiceColumn from '../../components/report/VoiceColumn.astro';
+import Officers from '../../components/report/Officers.astro';
+import Plate from '../../components/report/Plate.astro';
+import JetSilhouette from '../../components/report/JetSilhouette.astro';
+import OverprintDiscs from '../../components/report/OverprintDiscs.astro';
+import ReadingInsert from '../../components/report/ReadingInsert.astro';
+import BackCover from '../../components/report/BackCover.astro';
+import { BRAND, DEFINITION, CURVE, PEOPLE, CONNECT, DISCLAIMER } from '../../lib/site';
+import { getReading } from '../../lib/reading';
+
+const sections = (await getCollection('sections')).sort((a, b) => a.data.order - b.data.order);
+const voices = (await getCollection('voices')).sort((a, b) => a.data.order - b.data.order);
+const reading = await getReading();
+
+function section(id: string) {
+  const s = sections.find((e) => e.data.slug_id === id);
+  if (!s) throw new Error(`report/index.astro: missing section "${id}"`);
+  return s;
+}
+const scaleup = section('scaleup');
+const trust = section('trust');
+const why = section('why');
+const coalition = section('coalition');
+
+const { Content: ScaleupBody } = await render(scaleup);
+const { Content: TrustBody } = await render(trust);
+const { Content: WhyBody } = await render(why);
+const { Content: CoalitionBody } = await render(coalition);
+const voiceBodies = await Promise.all(voices.map(async (v) => ({ v, Body: (await render(v)).Content })));
+
+const ledgerRows = CURVE.points.map((p, i) => ({
+  no: String(i + 1),
+  label: p.label,
+  at: p.at.toFixed(2).replace(/^0/, ''),
+}));
+---
+
+<BaseThemeLayout
+  title="Mandatory Ventures: Annual Report"
+  description={`${BRAND.hero} ${BRAND.subhead}`}
+  theme="report"
+  mode="light"
+>
+  <ReportCover
+    hero={BRAND.hero}
+    subhead={BRAND.subhead}
+    name={BRAND.name}
+    domain={BRAND.domain}
+    definition={DEFINITION}
+  />
+
+  <main id="main" class="rp">
+    {/* I. From startup to scaleup: the chart spread. */}
+    <section class="sp" aria-labelledby="s-scaleup">
+      <RunningHead numeral="I" label="Report to stockholders" folio={2} />
+      <h2 class="sp-wide" id="s-scaleup">{scaleup.data.title}</h2>
+      <div class="sp-chart">
+        <figure class="sp-fig">
+          <CurveChart xLabel={CURVE.x_label} yLabel={CURVE.y_label} points={CURVE.points} />
+        </figure>
+        <div class="sp-side">
+          <ReportColumn eyebrow={scaleup.data.eyebrow} lead={scaleup.data.lead} note={scaleup.data.editor_note}>
+            <ScaleupBody />
+          </ReportColumn>
+          <div class="sp-ledger">
+            <Ledger
+              caption="Points on the curve"
+              columns={[
+                { key: 'no', label: 'No.', align: 'end' },
+                { key: 'label', label: 'Annotation' },
+                { key: 'at', label: 'Position', align: 'end' },
+              ]}
+              rows={ledgerRows}
+            />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    {/* II. The two voices: the letter spread. */}
+    <section class="sp" aria-labelledby="s-letter">
+      <RunningHead numeral="II" folio={4} />
+      <h2 class="sp-letter-head" id="s-letter">Letter to stockholders</h2>
+      <div class="sp-letter">
+        {voiceBodies.map(({ v, Body }, i) => (
+          <VoiceColumn id={`voice-${i + 1}`} audience={v.data.audience} who={v.data.who} takeaway={v.data.takeaway}>
+            <Body />
+          </VoiceColumn>
+        ))}
+      </div>
+      <p class="sp-signature ink-ballpoint">{PEOPLE[0].name}</p>
+    </section>
+
+    {/* III. People and trust: the officers page. */}
+    <section class="sp" aria-labelledby="s-trust">
+      <RunningHead numeral="III" folio={6} />
+      <div class="sp-two">
+        <ReportColumn
+          id="s-trust"
+          eyebrow={trust.data.eyebrow}
+          title={trust.data.title}
+          lead={trust.data.lead}
+          note={trust.data.editor_note}
+        >
+          <TrustBody />
+        </ReportColumn>
+        <div class="sp-officers">
+          <Officers heading="Officers" people={PEOPLE} />
+        </div>
+      </div>
+    </section>
+
+    {/* IV. Why this one: one silhouette plate facing one narrow column. */}
+    <section class="sp sp--bleed" aria-labelledby="s-why">
+      <div class="sp-spread">
+        <Plate tone="slate" folio={8}>
+          <JetSilhouette label="A four-engine jet, drawn as a flat one-ink silhouette, climbing." />
+          <h2 slot="caption" class="sp-cap" id="s-why">{why.data.title}</h2>
+        </Plate>
+        <div class="sp-narrow">
+          <RunningHead numeral="IV" folio={9} />
+          <ReportColumn eyebrow={why.data.eyebrow} note={why.data.editor_note}>
+            <WhyBody />
+          </ReportColumn>
+        </div>
+      </div>
+    </section>
+
+    {/* V. A coalition, not a company: the overprint plate. */}
+    <section class="sp sp--bleed" aria-labelledby="s-coalition">
+      <div class="sp-spread sp-spread--rev">
+        <div class="sp-narrow">
+          <RunningHead numeral="V" folio={10} />
+          <ReportColumn
+            id="s-coalition"
+            eyebrow={coalition.data.eyebrow}
+            title={coalition.data.title}
+            lead={coalition.data.lead}
+            note={coalition.data.editor_note}
+          >
+            <CoalitionBody />
+          </ReportColumn>
+        </div>
+        <Plate tone="paper" folio={11}>
+          <OverprintDiscs label="Five transparent discs of different inks overlapping, with one small red mark where they all meet." />
+        </Plate>
+      </div>
+    </section>
+
+    <div class="sp sp-insert">
+      <ReadingInsert
+        label="Mandatory Reading"
+        items={reading.map((r) => ({ href: `/report/reading/${r.id}/`, title: r.data.title, lede: r.data.lede }))}
+      />
+    </div>
+  </main>
+
+  <BackCover signOff={BRAND.sign_off} connect={CONNECT} disclaimer={DISCLAIMER} name={BRAND.name} />
+</BaseThemeLayout>
+
+<style>
+  .rp { display: block; }
+
+  .sp {
+    max-width: var(--page-measure);
+    margin: 0 auto;
+    padding: clamp(4rem, 9vw, 7.5rem) var(--page-gutter) 0;
+  }
+  .sp--bleed { max-width: 100rem; padding-left: 0; padding-right: 0; }
+
+  /* A big letterspaced title running across the spread (Central 1958). */
+  .sp-wide {
+    margin: clamp(2rem, 5vw, 3.5rem) 0 clamp(2rem, 4vw, 3rem);
+    font-family: var(--font-lockup);
+    font-weight: 400;
+    font-size: clamp(1.15rem, 3.4vw, 2.5rem);
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    line-height: 1.25;
+  }
+
+  .sp-chart { display: grid; gap: clamp(2rem, 5vw, 4rem); grid-template-columns: minmax(0, 1fr); }
+  .sp-fig { margin: 0; }
+  .sp-ledger { margin-top: 2.5rem; }
+
+  .sp-letter-head {
+    margin: clamp(2rem, 5vw, 3.5rem) 0 clamp(2rem, 4vw, 3rem);
+    text-align: center;
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(1.9rem, 4vw, 3rem);
+  }
+  .sp-letter { display: grid; gap: 3rem; grid-template-columns: minmax(0, 1fr); max-width: 60rem; margin: 0 auto; }
+  .sp-signature {
+    max-width: 60rem; margin: 2.5rem auto 0;
+    text-align: right;
+    font-family: var(--font-hand);
+    font-size: 2.2rem;
+    color: var(--color-pen-blue);
+    transform: rotate(-2deg);
+  }
+
+  .sp-two { display: grid; gap: 3.5rem; grid-template-columns: minmax(0, 1fr); padding-top: clamp(2rem, 5vw, 3.5rem); }
+  .sp-officers { align-self: center; padding: 2.5rem 0; border-top: 1px solid var(--color-border); border-bottom: 1px solid var(--color-border); }
+
+  .sp-spread { display: grid; grid-template-columns: minmax(0, 1fr); }
+  .sp-narrow { padding: 2.5rem var(--page-gutter) 0; }
+  .sp-narrow :global(.rh) { margin-bottom: 2rem; }
+
+  .sp-cap {
+    margin: 0;
+    font-family: var(--font-lockup);
+    font-weight: 400;
+    font-size: clamp(0.72rem, 1.4vw, 0.95rem);
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+  }
+
+  .sp-insert { padding-top: clamp(4rem, 8vw, 6rem); }
+
+  @media (min-width: 860px) {
+    .sp-chart { grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); align-items: start; }
+    .sp-letter {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 0;
+    }
+    .sp-letter > :global(*:first-child) { padding-right: 2.75rem; border-right: 1px solid var(--color-border); }
+    .sp-letter > :global(*:last-child) { padding-left: 2.75rem; }
+    .sp-two { grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 5rem; }
+    .sp-spread { grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); }
+    .sp-spread--rev { grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr); }
+    .sp-narrow { padding: 0 var(--page-gutter); align-self: start; padding-top: 0; }
+    .sp-narrow { padding-top: 0.5rem; }
+  }
+</style>

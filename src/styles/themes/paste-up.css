@@ -1,0 +1,223 @@
+/* ============================================================================
+ * DIRECTION — "Paste-Up" · theme slug `paste-up`
+ *
+ * TIER 2 semantic tokens. kebab-case only. Tier 1 `--color__*` / `--font__*`
+ * live in global.css and are referenced ONLY from inside this file.
+ *
+ * The premise: the site is the mechanical for a printed piece, caught
+ * mid-production. A board, typed slips of copy pasted onto it, a Bodoni
+ * headline set by hand and printed in two plates that never quite met,
+ * coarse dot screens, crop and registration marks, blue-pencil instructions
+ * to the printer, and the editor's red pen. The humor is the effort showing.
+ *
+ * INKS (limited, as on a two-colour press):
+ *   black (typewriter) · red (editor's pen, plate 2) · blue (non-repro
+ *   pencil + marker) · ONE Nitsche band colour, teal, for every dot screen.
+ *
+ * ---------------------------------------------------------------------------
+ * THE TOKEN CONTRACT (global.css) is defined in full for every mode below.
+ *
+ * DIRECTION-LOCAL EXTENSIONS (still Tier 2, declared only here):
+ *   board    --color-board-ink --color-board-ink-muted --color-board-red
+ *            --color-board-blue --board-image --board-image-size
+ *   paper    --color-slip-edge --color-slip-shadow --slip-shadow
+ *            --slip-shadow-lifted --color-tape
+ *   screens  --color-halftone --halftone-size
+ *   cut-out  --color-cutout --color-cutout-paper --color-cutout-shadow
+ *   type     --font-typed (the worn typewriter used for labels)
+ *
+ * MODE INTENT
+ *   light   — the board on the drafting table: atomic-sage board, cream slips.
+ *   dark    — the light table switched off: carbon stock, cream slips, the
+ *             blue pencil and red pen lifted so they still read on the board.
+ *   vibrant — the light table switched ON (dark-based). The glass glows faint
+ *             and warm through a ruled grid, the slips are lit from beneath
+ *             (brighter cream, a soft paper halo instead of a cast shadow),
+ *             red and blue are lifted. Still printed: no neon, no gloss.
+ * ========================================================================== */
+
+[data-theme="paste-up"] {
+  /* -- type (same in every mode) -- */
+  --font-display: var(--font__bodoni);
+  --font-body:    var(--font__courier-prime);
+  --font-data:    var(--font__cutive-mono);
+  --font-eyebrow: var(--font__jost);
+  --font-hand:    var(--font__caveat);
+  --font-lockup:  var(--font__michroma);
+  --font-typed:   var(--font__special-elite);
+
+  /* -- shape -- */
+  --radius-control: 0px;
+  --page-measure: 62ch;
+  --page-gutter: clamp(16px, 4.5vw, 56px);
+  --halftone-size: 7px;
+}
+
+/* ---------------------------------------------------------------------------
+ * LIGHT — the board on the drafting table (default, authored first)
+ * ------------------------------------------------------------------------- */
+[data-theme="paste-up"],
+[data-theme="paste-up"][data-mode="light"] {
+  --color-background:     var(--color__atomic-sage);
+  --color-surface:        var(--color__atomic-cream);
+  --color-surface-raised: var(--color__paper-bone);
+
+  --color-text:       var(--color__typewriter-black);
+  --color-text-muted: color-mix(in oklab, var(--color__typewriter-black) 78%, var(--color__atomic-cream));
+  --color-text-faint: color-mix(in oklab, var(--color__typewriter-black) 50%, var(--color__atomic-cream));
+
+  --color-primary:      var(--color__pen-blue);
+  --color-primary-soft: color-mix(in oklab, var(--color__marker-blue) 16%, var(--color__atomic-cream));
+  --color-accent:       var(--color__fusion-red);
+
+  --color-pen-blue:    var(--color__pen-blue);
+  --color-marker-blue: var(--color__marker-blue);
+  --color-editor-red:  var(--color__fusion-red);
+
+  --color-band-1: var(--color__deep-slate);
+  --color-band-2: var(--color__mauve-grey);
+  --color-band-3: var(--color__sage-band);
+  --color-band-4: var(--color__teal-band);
+
+  --color-border: color-mix(in oklab, var(--color__typewriter-black) 22%, transparent);
+  --color-rule:   var(--color__fusion-red);
+  --color-grid:   color-mix(in oklab, var(--color__marker-blue) 42%, transparent);
+
+  --fx-grain-opacity: 0.09;
+  --fx-rough-scale: 1;
+  --fx-misregister: 3px;
+
+  /* board */
+  --color-board-ink:       var(--color__typewriter-black);
+  --color-board-ink-muted: color-mix(in oklab, var(--color__typewriter-black) 72%, var(--color__atomic-sage));
+  --color-board-red:       color-mix(in oklab, var(--color__fusion-red) 82%, var(--color__typewriter-black));
+  --color-board-blue:      var(--color__pen-blue);
+  --board-image:
+    linear-gradient(90deg, color-mix(in oklab, var(--color__marker-blue) 13%, transparent) 1px, transparent 1px),
+    linear-gradient(0deg,  color-mix(in oklab, var(--color__marker-blue) 13%, transparent) 1px, transparent 1px);
+  --board-image-size: 48px 48px;
+
+  /* paper */
+  --color-slip-edge:   var(--color__paper-shadow);
+  --color-slip-shadow: color-mix(in oklab, var(--color__deep-slate) 34%, transparent);
+  --slip-shadow:        1px 2px 0 var(--color-slip-shadow), 3px 7px 10px -6px var(--color-slip-shadow);
+  --slip-shadow-lifted: 2px 3px 0 var(--color-slip-shadow), 10px 18px 22px -10px var(--color-slip-shadow);
+  --color-tape:        color-mix(in oklab, var(--color__paper-bone) 62%, transparent);
+
+  /* screens + cut-out */
+  --color-halftone:      var(--color__teal-band);
+  --color-cutout:        var(--color__typewriter-black);
+  --color-cutout-paper:  var(--color__paper-bone);
+  --color-cutout-shadow: color-mix(in oklab, var(--color__deep-slate) 45%, transparent);
+}
+
+/* ---------------------------------------------------------------------------
+ * DARK — the light table switched off: carbon stock, cream slips
+ * ------------------------------------------------------------------------- */
+[data-theme="paste-up"][data-mode="dark"] {
+  --color-background:     var(--color__carbon);
+  --color-surface:        color-mix(in oklab, var(--color__atomic-cream) 90%, var(--color__paper-shadow));
+  --color-surface-raised: var(--color__paper-foxed);
+
+  --color-text:       var(--color__typewriter-black);
+  --color-text-muted: color-mix(in oklab, var(--color__typewriter-black) 78%, var(--color__atomic-cream));
+  --color-text-faint: color-mix(in oklab, var(--color__typewriter-black) 50%, var(--color__atomic-cream));
+
+  --color-primary:      var(--color__pen-blue);
+  --color-primary-soft: color-mix(in oklab, var(--color__marker-blue) 16%, var(--color__atomic-cream));
+  --color-accent:       var(--color__fusion-red);
+
+  --color-pen-blue:    var(--color__pen-blue);
+  --color-marker-blue: var(--color__marker-blue);
+  --color-editor-red:  var(--color__fusion-red);
+
+  --color-band-1: var(--color__deep-slate);
+  --color-band-2: var(--color__mauve-grey);
+  --color-band-3: var(--color__sage-band);
+  --color-band-4: var(--color__teal-band);
+
+  --color-border: color-mix(in oklab, var(--color__typewriter-black) 24%, transparent);
+  --color-rule:   var(--color__red-lit);
+  --color-grid:   color-mix(in oklab, var(--color__blue-lit) 30%, transparent);
+
+  --fx-grain-opacity: 0.07;
+  --fx-rough-scale: 1;
+  --fx-misregister: 2px;
+
+  --color-board-ink:       var(--color__cream-lit);
+  --color-board-ink-muted: color-mix(in oklab, var(--color__cream-lit) 66%, var(--color__carbon));
+  --color-board-red:       var(--color__red-lit);
+  --color-board-blue:      var(--color__blue-lit);
+  --board-image:
+    linear-gradient(90deg, color-mix(in oklab, var(--color__blue-lit) 7%, transparent) 1px, transparent 1px),
+    linear-gradient(0deg,  color-mix(in oklab, var(--color__blue-lit) 7%, transparent) 1px, transparent 1px);
+  --board-image-size: 48px 48px;
+
+  --color-slip-edge:   var(--color__paper-shadow);
+  --color-slip-shadow: color-mix(in oklab, black 70%, transparent);
+  --slip-shadow:        1px 2px 0 var(--color-slip-shadow), 4px 9px 14px -6px var(--color-slip-shadow);
+  --slip-shadow-lifted: 2px 3px 0 var(--color-slip-shadow), 12px 20px 26px -10px var(--color-slip-shadow);
+  --color-tape:        color-mix(in oklab, var(--color__paper-bone) 40%, transparent);
+
+  --color-halftone:      var(--color__teal-band);
+  --color-cutout:        var(--color__typewriter-black);
+  --color-cutout-paper:  var(--color__paper-bone);
+  --color-cutout-shadow: color-mix(in oklab, black 70%, transparent);
+}
+
+/* ---------------------------------------------------------------------------
+ * VIBRANT — the light table switched ON (dark-based, every value explicit)
+ * ------------------------------------------------------------------------- */
+[data-theme="paste-up"][data-mode="vibrant"] {
+  --color-background:     var(--color__carbon-raised);
+  --color-surface:        var(--color__cream-lit);
+  --color-surface-raised: var(--color__cream-lit);
+
+  --color-text:       var(--color__typewriter-black);
+  --color-text-muted: color-mix(in oklab, var(--color__typewriter-black) 78%, var(--color__cream-lit));
+  --color-text-faint: color-mix(in oklab, var(--color__typewriter-black) 50%, var(--color__cream-lit));
+
+  --color-primary:      color-mix(in oklab, var(--color__pen-blue) 70%, var(--color__marker-lit));
+  --color-primary-soft: color-mix(in oklab, var(--color__marker-lit) 18%, var(--color__cream-lit));
+  --color-accent:       color-mix(in oklab, var(--color__fusion-red) 70%, var(--color__red-lit));
+
+  --color-pen-blue:    color-mix(in oklab, var(--color__pen-blue) 70%, var(--color__marker-lit));
+  --color-marker-blue: color-mix(in oklab, var(--color__marker-blue) 70%, var(--color__marker-lit));
+  --color-editor-red:  color-mix(in oklab, var(--color__fusion-red) 70%, var(--color__red-lit));
+
+  --color-band-1: var(--color__deep-slate);
+  --color-band-2: var(--color__mauve-grey);
+  --color-band-3: var(--color__sage-lit);
+  --color-band-4: var(--color__teal-band);
+
+  --color-border: color-mix(in oklab, var(--color__typewriter-black) 22%, transparent);
+  --color-rule:   var(--color__red-lit);
+  --color-grid:   color-mix(in oklab, var(--color__blue-lit) 46%, transparent);
+
+  --fx-grain-opacity: 0.06;
+  --fx-rough-scale: 1;
+  --fx-misregister: 4px;
+
+  --color-board-ink:       var(--color__cream-lit);
+  --color-board-ink-muted: color-mix(in oklab, var(--color__cream-lit) 74%, var(--color__carbon-raised));
+  --color-board-red:       var(--color__red-lit);
+  --color-board-blue:      var(--color__blue-lit);
+  /* Lit glass: a ruled grid, and a faint warm bloom where the lamp sits. */
+  --board-image:
+    radial-gradient(ellipse 70% 55% at 50% 28%, color-mix(in oklab, var(--color__cream-lit) 13%, transparent), transparent 72%),
+    linear-gradient(90deg, color-mix(in oklab, var(--color__blue-lit) 16%, transparent) 1px, transparent 1px),
+    linear-gradient(0deg,  color-mix(in oklab, var(--color__blue-lit) 16%, transparent) 1px, transparent 1px);
+  --board-image-size: 100% 100%, 24px 24px, 24px 24px;
+
+  --color-slip-edge:   color-mix(in oklab, var(--color__cream-lit) 70%, var(--color__aged-gold));
+  --color-slip-shadow: color-mix(in oklab, var(--color__cream-lit) 22%, transparent);
+  /* Lit from beneath: light spills round the paper edge instead of a cast shadow. */
+  --slip-shadow:        0 0 0 1px color-mix(in oklab, var(--color__cream-lit) 30%, transparent), 0 0 18px 2px var(--color-slip-shadow);
+  --slip-shadow-lifted: 0 0 0 1px color-mix(in oklab, var(--color__cream-lit) 30%, transparent), 0 0 30px 6px var(--color-slip-shadow);
+  --color-tape:        color-mix(in oklab, var(--color__aged-gold) 30%, transparent);
+
+  --color-halftone:      var(--color__teal-band);
+  --color-cutout:        var(--color__typewriter-black);
+  --color-cutout-paper:  var(--color__cream-lit);
+  --color-cutout-shadow: color-mix(in oklab, var(--color__cream-lit) 25%, transparent);
+}

@@ -1,0 +1,116 @@
+---
+/* The hero, set in Letraset Bodoni straight onto the board. Two plates:
+ *   black — every letter rubbed down by hand, so each sits a hair off its
+ *           neighbour's baseline and angle; carries a red ghost where plate
+ *           two was printed off register.
+ *   red   — the words "most important", on their own slip, still in the
+ *           cut-out hand on the way to their slot (the blue-pencil box).
+ * The heading's accessible name is the plain line; the plates are visual. */
+import CutoutHand from './CutoutHand.astro';
+
+export interface Props { text: string; red?: string; id?: string }
+const { text, red = 'most important', id } = Astro.props;
+
+const i = text.indexOf(red);
+const before = i >= 0 ? text.slice(0, i).trim() : text;
+const after = i >= 0 ? text.slice(i + red.length).trim() : '';
+
+/* Lines: two words, then the rest, then the red slip, then the tail. */
+const words = before.split(/\s+/);
+const lineA = words.slice(0, 2);
+const lineB = words.slice(2);
+
+/* Deterministic hand-rubbed jitter, so builds are stable. */
+let seed = 7;
+const rnd = () => ((seed = (seed * 9301 + 49297) % 233280) / 233280) - 0.5;
+const letters = (w: string) =>
+  w.split('').map((ch) => ({ ch, y: (rnd() * 0.05).toFixed(3), r: (rnd() * 2.6).toFixed(2) }));
+const lines = [lineA, lineB, ...(after ? [after.split(/\s+/)] : [])].map((l) => l.map(letters));
+const tail = after ? lines.pop()! : [];
+---
+<h1 class="pu-hl" id={id} aria-label={text}>
+  <span class="plates" aria-hidden="true">
+    {lines.map((line) => (
+      <span class="line">
+        {line.map((word, wi) => (
+          <><span class="word">{word.map((l) => <span class="lt" style={`--y:${l.y}em;--lr:${l.r}deg`}>{l.ch}</span>)}</span>{wi < line.length - 1 ? ' ' : ''}</>
+        ))}{' '}
+      </span>
+    ))}
+    {i >= 0 && (
+      <span class="line red-line">
+        <span class="slot"><span class="red-slip">{red}</span><span class="hand"><CutoutHand /></span></span>{' '}
+      </span>
+    )}
+    {tail.length > 0 && (
+      <span class="line">
+        {tail.map((word, wi) => (
+          <><span class="word">{word.map((l) => <span class="lt" style={`--y:${l.y}em;--lr:${l.r}deg`}>{l.ch}</span>)}</span>{wi < tail.length - 1 ? ' ' : ''}</>
+        ))}
+      </span>
+    )}
+  </span>
+</h1>
+
+<style>
+  .pu-hl {
+    margin: 0;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-variation-settings: 'opsz' 96;
+    font-size: clamp(2.5rem, 1.2rem + 6.4vw, 6.4rem);
+    line-height: 0.98;
+    letter-spacing: -0.012em;
+    color: var(--color-board-ink);
+  }
+  .plates { display: block; }
+  .line { display: block; }
+  .word { display: inline-block; white-space: nowrap; }
+  .lt {
+    display: inline-block;
+    transform: translateY(var(--y)) rotate(var(--lr));
+    /* plate two, off register */
+    text-shadow:
+      var(--fx-misregister) calc(var(--fx-misregister) * -0.6) 0
+      color-mix(in oklab, var(--color-board-red) 78%, transparent);
+  }
+  .red-line { margin-top: 0.22em; }
+  .slot {
+    position: relative;
+    display: inline-block;
+    /* where the red plate belongs, in non-repro blue */
+    outline: 1.5px dashed var(--color-board-blue);
+    outline-offset: 0.06em;
+    margin-right: 0.18em;
+  }
+  .red-slip {
+    position: relative;
+    z-index: 1;
+    display: inline-block;
+    font-style: italic;
+    font-weight: 600;
+    color: var(--color-editor-red);
+    background: var(--color-surface);
+    border: 1px solid var(--color-slip-edge);
+    box-shadow: var(--slip-shadow-lifted);
+    padding: 0.02em 0.16em 0.1em 0.1em;
+    transform: translate(calc(var(--fx-misregister) * 4), -0.1em) rotate(-3.5deg);
+  }
+  .hand {
+    position: absolute;
+    z-index: 2;
+    width: 6.4em;
+    /* pinch point (12%, 49% of the hand) lands on the slip's right edge */
+    left: calc(100% - 0.62em);
+    top: -1.0em;
+    transform: rotate(16deg);
+    transform-origin: 12% 49%;
+    pointer-events: none;
+  }
+  .hand :global(svg) { width: 100%; }
+  @media (max-width: 759px) {
+    .hand { width: 4.4em; left: calc(100% - 1.05em); top: -0.55em; transform: rotate(38deg); }
+    .red-line { margin-bottom: 0.18em; }
+    .lt { transform: translateY(calc(var(--y) * 0.5)) rotate(calc(var(--lr) * 0.5)); }
+  }
+</style>

@@ -1,0 +1,53 @@
+---
+/* ============================================================================
+ * JetSilhouette — the default illustration register (Central Airlines 1966):
+ * a flat, single-ink silhouette, no outline, no interior detail. A few thin
+ * gaps in the ground colour stand in for highlights, the way the Central
+ * plane's edges carry the drawing. Four-engine jet in plan view, climbing.
+ * Reads --pl-ink / --pl-ground from Plate, falling back to Tier 2 tokens.
+ * ========================================================================== */
+interface Props { label: string }
+const { label } = Astro.props;
+
+/* Wings and pods are drawn once for the upper side and mirrored. */
+const wing = 'M524 236 L372 46 L338 44 L410 236 Z';
+const pods = [
+  'M446 150 h58 a9 9 0 0 1 0 18 h-58 a9 9 0 0 1 0 -18 Z',
+  'M398 90 h52 a8 8 0 0 1 0 16 h-52 a8 8 0 0 1 0 -16 Z',
+];
+const tail = 'M178 238 L112 158 L90 156 L128 238 Z';
+---
+
+<svg class="jet" viewBox="-40 -60 880 620" role="img" aria-label={label}>
+  <g transform="rotate(-17 400 250)">
+    <g class="jet-ink ink-spread">
+      <path d="M740 250 C 722 230, 676 231, 630 233 L 150 238 C 112 239, 90 244, 72 250 C 90 256, 112 261, 150 262 L 630 267 C 676 269, 722 270, 740 250 Z" />
+      <path d={wing} />
+      <path d={wing} transform="matrix(1 0 0 -1 0 500)" />
+      {pods.map((d) => <path d={d} />)}
+      {pods.map((d) => <path d={d} transform="matrix(1 0 0 -1 0 500)" />)}
+      <path d={tail} />
+      <path d={tail} transform="matrix(1 0 0 -1 0 500)" />
+    </g>
+    <!-- Highlights: gaps of bare stock, as on the Central plane. -->
+    <g class="jet-gap ink-typewriter">
+      <path d="M690 244 C 600 241, 400 243, 200 245" />
+      <path d="M500 214 L 380 66" />
+      <path d="M500 286 L 380 434" />
+      <path d="M470 156 h28" />
+      <path d="M470 344 h28" />
+      <path d="M158 226 L 118 172" />
+    </g>
+  </g>
+</svg>
+
+<style>
+  .jet { display: block; }
+  .jet-ink { fill: var(--pl-ink, var(--color-band-1)); }
+  .jet-gap {
+    fill: none;
+    stroke: var(--pl-ground, var(--color-band-2));
+    stroke-width: 2.4;
+    stroke-linecap: round;
+  }
+</style>

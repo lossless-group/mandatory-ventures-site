@@ -1,0 +1,76 @@
+---
+/* ============================================================================
+ * BackCover — the last page: the sign-off in italic Bodoni, the two ways to
+ * connect typed like an address block, the disclaimer as deadpan small print,
+ * and the lockup again in extended caps over a thin strip of the banded field.
+ * ========================================================================== */
+interface Link { label: string; handle: string; href: string }
+interface Props { signOff: string; connect: readonly Link[]; disclaimer: string; name: string }
+const { signOff, connect, disclaimer, name } = Astro.props;
+const strip = ['--color-band-1', '--color-band-2', '--color-band-3', '--color-band-4'];
+---
+
+<footer class="bc">
+  <div class="bc-inner">
+    <p class="bc-sign">{signOff}</p>
+    <nav class="bc-connect" aria-label="Connect">
+      <ul>
+        {connect.map((c) => (
+          <li>
+            <span class="bc-k">{c.label}</span>
+            <a href={c.href} rel="me noopener" target="_blank">{c.handle}</a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+    <p class="bc-small"><span class="bc-arrow" aria-hidden="true">&#9654;</span> {disclaimer}</p>
+  </div>
+  <div class="bc-strip" aria-hidden="true">
+    {strip.map((t) => <span style={`background: var(${t});`}></span>)}
+  </div>
+  <p class="bc-lockup" aria-hidden="true">{name}</p>
+</footer>
+
+<style>
+  .bc { margin-top: clamp(4rem, 10vw, 8rem); }
+  .bc-inner {
+    max-width: var(--page-measure);
+    margin: 0 auto;
+    padding: 0 var(--page-gutter) clamp(2.5rem, 6vw, 4rem);
+    display: grid; gap: 2rem;
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .bc-sign {
+    margin: 0;
+    font-family: var(--font-display); font-style: italic;
+    font-size: clamp(2rem, 5vw, 3.4rem); line-height: 1;
+  }
+  .bc-connect ul { list-style: none; margin: 0; padding: 0; font-family: var(--font-data); font-size: 1rem; }
+  .bc-connect li { display: flex; gap: 1rem; padding: 0.3rem 0; }
+  .bc-k { min-width: 5.5rem; color: var(--color-text-muted); }
+  .bc-connect a { color: var(--color-primary); text-underline-offset: 0.2em; }
+  .bc-small {
+    margin: 0;
+    font-family: var(--font-eyebrow);
+    font-size: 0.72rem; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--color-text-muted);
+  }
+  .bc-arrow { font-size: 0.8em; color: var(--color-text); }
+  .bc-strip { display: flex; flex-direction: column; }
+  .bc-strip span { height: 0.7rem; border-bottom: 1px solid var(--color-band-1); }
+  .bc-lockup {
+    margin: 0;
+    padding: 1.1rem var(--page-gutter) 1.4rem;
+    background: var(--color-band-4);
+    color: var(--color-surface);
+    font-family: var(--font-lockup);
+    font-size: clamp(0.7rem, 1.8vw, 1.1rem);
+    letter-spacing: 0.42em; text-transform: uppercase;
+    text-align: center; white-space: nowrap;
+  }
+  :global(html.dark) .bc-lockup { color: var(--color-text); }
+  @media (min-width: 760px) {
+    .bc-inner { grid-template-columns: 1.3fr 1fr; align-items: end; }
+    .bc-small { grid-column: 1 / -1; }
+  }
+</style>

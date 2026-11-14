@@ -1,0 +1,62 @@
+---
+/* ============================================================================
+ * ReportColumn — the narrow text column that faces a plate (Utah
+ * Construction 1963): eyebrow in spaced geometric caps (the "POSTMASTER:"
+ * voice), a Bodoni head, the lead in italic book serif, the body in Caslon,
+ * and the editor's red pen last. Any of eyebrow / title / lead / note may be
+ * omitted (e.g. when the head is set as the plate caption instead).
+ * ========================================================================== */
+import EditorNote from './EditorNote.astro';
+
+interface Props {
+  id?: string;
+  eyebrow?: string;
+  title?: string;
+  lead?: string;
+  note?: string;
+}
+const { id, eyebrow, title, lead, note } = Astro.props;
+---
+
+<div class="col">
+  {eyebrow && <p class="col-eyebrow">{eyebrow}</p>}
+  {title && <h2 class="col-title" id={id}>{title}</h2>}
+  {lead && <p class="col-lead">{lead}</p>}
+  <div class="col-body"><slot /></div>
+  {note && <EditorNote text={note} />}
+  <slot name="after" />
+</div>
+
+<style>
+  .col { max-width: 30rem; }
+  .col-eyebrow {
+    margin: 0 0 0.9rem;
+    font-family: var(--font-eyebrow);
+    font-size: 0.72rem; font-weight: 500;
+    letter-spacing: 0.24em; text-transform: uppercase;
+    color: var(--color-text-muted);
+  }
+  .col-title {
+    margin: 0;
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: clamp(1.9rem, 3.4vw, 2.75rem);
+    line-height: 1.05; letter-spacing: -0.01em;
+    text-wrap: balance;
+  }
+  .col-lead {
+    margin: 1.1rem 0 0;
+    font-family: var(--font-body);
+    font-style: italic;
+    font-size: 1.2rem; line-height: 1.4;
+  }
+  .col-body {
+    margin-top: 1.1rem;
+    font-family: var(--font-body);
+    font-size: 1rem; line-height: 1.62;
+    color: var(--color-text);
+    hyphens: auto;
+  }
+  .col-body :global(p) { margin: 0 0 0.9em; }
+  .col-body :global(p + p) { text-indent: 1.4em; margin-top: -0.9em; }
+</style>

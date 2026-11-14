@@ -1,0 +1,54 @@
+---
+/* ============================================================================
+ * ReadingInsert — Mandatory Reading as a loose insert tucked into the
+ * report: a cream slip with a red hairline, a spaced-caps label, the article
+ * title as the link, and its lede in italic serif.
+ * ========================================================================== */
+interface Item { href: string; title: string; lede?: string }
+interface Props { label: string; items: Item[] }
+const { label, items } = Astro.props;
+---
+
+<section class="ri" aria-labelledby="reading-head">
+  <h2 class="ri-label" id="reading-head">{label}</h2>
+  <ul class="ri-list">
+    {items.map((it) => (
+      <li>
+        <a class="ri-title" href={it.href}>{it.title}</a>
+        {it.lede && <p class="ri-lede">{it.lede}</p>}
+      </li>
+    ))}
+  </ul>
+</section>
+
+<style>
+  .ri {
+    background: var(--color-surface);
+    border-top: 1.5px solid var(--color-rule);
+    padding: 1.4rem clamp(1.1rem, 3vw, 2rem) 1.6rem;
+    max-width: 34rem;
+    transform: rotate(-0.6deg);
+    box-shadow: 0 1px 0 var(--color-border);
+  }
+  .ri-label {
+    margin: 0 0 0.9rem;
+    font-family: var(--font-eyebrow);
+    font-size: 0.72rem; font-weight: 500;
+    letter-spacing: 0.26em; text-transform: uppercase;
+    color: var(--color-text-muted);
+  }
+  .ri-list { list-style: none; margin: 0; padding: 0; }
+  .ri-title {
+    font-family: var(--font-display); font-style: italic;
+    font-size: 1.6rem; line-height: 1.15;
+    color: var(--color-primary);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.18em;
+  }
+  .ri-lede {
+    margin: 0.6rem 0 0;
+    font-family: var(--font-body);
+    line-height: 1.5;
+    color: var(--color-text-muted);
+  }
+</style>

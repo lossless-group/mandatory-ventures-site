@@ -1,0 +1,136 @@
+/* ============================================================================
+ * DIRECTION `report` — "Annual Report"
+ *
+ * TIER 2 semantic tokens. kebab-case only. Tier 1 `--color__*` / `--font__*`
+ * live in global.css and are referenced ONLY from inside this file.
+ *
+ * The premise: a 1960s corporate annual report (General Dynamics art-directed
+ * by Erik Nitsche; Central Airlines, Northwest Airlines, Utah Construction)
+ * that has sat on a shelf for sixty years. Toned stock, a Nitsche banded
+ * cover, wide extended caps for the lockup, Bodoni for heads, a book serif for
+ * the letter, typewriter for every figure and chart frame, red pen for the
+ * editor.
+ *
+ * Type, by job
+ *   display  Bodoni Moda       high-contrast heads, the hero
+ *   body     Libre Caslon Text the letter to stockholders
+ *   data     Courier Prime     tables, chart frame, folios (typewriter)
+ *   eyebrow  Jost              small, widely spaced geometric caps
+ *   hand     Caveat            the editor's red pen
+ *   lockup   Michroma          the name in extended caps, running heads
+ *
+ * Mode intent
+ *   light   — foxed off-white stock, typewriter black, pen blue, one red.
+ *   dark    — the same report read under a desk lamp: carbon stock, inks
+ *             lifted, the bands sunk so the cover still reads as printed.
+ *   vibrant — the fusion poster itself: DARK-BASED green-slate stock, the
+ *             bands at full strength, cream for the light shapes, the red
+ *             lifted. Every ground, surface, text and border set explicitly.
+ * ========================================================================== */
+
+[data-theme="report"] {
+  --font-display: var(--font__bodoni);
+  --font-body:    var(--font__caslon);
+  --font-data:    var(--font__courier-prime);
+  --font-eyebrow: var(--font__jost);
+  --font-hand:    var(--font__caveat);
+  --font-lockup:  var(--font__michroma);
+
+  --radius-control: 0;
+  --page-measure:   76rem;
+  --page-gutter:    clamp(1rem, 4.5vw, 3.5rem);
+
+  --fx-rough-scale: 1;
+  --fx-misregister: 1.5px;
+}
+
+/* --------------------------------------------------------------- light --- */
+[data-theme="report"][data-mode="light"] {
+  --color-background:     var(--color__paper-foxed);
+  --color-surface:        var(--color__atomic-cream);
+  --color-surface-raised: var(--color__paper-shadow);
+
+  --color-text:           var(--color__typewriter-black);
+  --color-text-muted:     color-mix(in srgb, var(--color__typewriter-black) 74%, var(--color__paper-foxed));
+  --color-text-faint:     color-mix(in srgb, var(--color__typewriter-black) 58%, var(--color__paper-foxed));
+
+  --color-primary:        var(--color__pen-blue);
+  --color-primary-soft:   color-mix(in srgb, var(--color__marker-blue) 30%, var(--color__paper-bone));
+  --color-accent:         var(--color__sage-band);
+
+  --color-pen-blue:       var(--color__pen-blue);
+  --color-marker-blue:    var(--color__marker-blue);
+  --color-editor-red:     var(--color__fusion-red);
+
+  --color-band-1:         var(--color__deep-slate);
+  --color-band-2:         var(--color__mauve-grey);
+  --color-band-3:         var(--color__sage-band);
+  --color-band-4:         var(--color__teal-band);
+
+  --color-border:         color-mix(in srgb, var(--color__typewriter-black) 30%, var(--color__paper-foxed));
+  --color-rule:           var(--color__fusion-red);
+  --color-grid:           color-mix(in srgb, var(--color__typewriter-black) 16%, var(--color__paper-foxed));
+
+  --fx-grain-opacity:     0.11;
+}
+
+/* ---------------------------------------------------------------- dark --- */
+[data-theme="report"][data-mode="dark"] {
+  --color-background:     var(--color__carbon);
+  --color-surface:        var(--color__carbon-raised);
+  --color-surface-raised: color-mix(in srgb, var(--color__carbon-line) 60%, var(--color__carbon-raised));
+
+  --color-text:           var(--color__cream-lit);
+  --color-text-muted:     color-mix(in srgb, var(--color__cream-lit) 74%, var(--color__carbon));
+  --color-text-faint:     color-mix(in srgb, var(--color__cream-lit) 56%, var(--color__carbon));
+
+  --color-primary:        var(--color__blue-lit);
+  --color-primary-soft:   color-mix(in srgb, var(--color__marker-lit) 14%, var(--color__carbon));
+  --color-accent:         var(--color__sage-lit);
+
+  --color-pen-blue:       var(--color__blue-lit);
+  --color-marker-blue:    var(--color__marker-lit);
+  --color-editor-red:     var(--color__red-lit);
+
+  --color-band-1:         color-mix(in srgb, var(--color__deep-slate) 70%, var(--color__mauve-grey));
+  --color-band-2:         color-mix(in srgb, var(--color__mauve-grey) 52%, var(--color__carbon));
+  --color-band-3:         color-mix(in srgb, var(--color__sage-band) 62%, var(--color__carbon));
+  --color-band-4:         color-mix(in srgb, var(--color__teal-band) 56%, var(--color__carbon));
+
+  --color-border:         var(--color__carbon-line);
+  --color-rule:           var(--color__red-lit);
+  --color-grid:           color-mix(in srgb, var(--color__cream-lit) 13%, var(--color__carbon));
+
+  --fx-grain-opacity:     0.06;
+}
+
+/* ------------------------------------------------------------- vibrant --- */
+/* The fusion poster: green-slate stock, bands at full ink, cream shapes. */
+[data-theme="report"][data-mode="vibrant"] {
+  --color-background:     color-mix(in srgb, var(--color__band-ink) 58%, var(--color__deep-slate));
+  --color-surface:        color-mix(in srgb, var(--color__band-ink) 78%, var(--color__deep-slate));
+  --color-surface-raised: var(--color__band-ink);
+
+  --color-text:           var(--color__atomic-cream);
+  --color-text-muted:     color-mix(in srgb, var(--color__atomic-cream) 78%, var(--color__band-ink));
+  --color-text-faint:     color-mix(in srgb, var(--color__atomic-cream) 60%, var(--color__band-ink));
+
+  --color-primary:        var(--color__blue-lit);
+  --color-primary-soft:   color-mix(in srgb, var(--color__atomic-cream) 10%, var(--color__band-ink));
+  --color-accent:         var(--color__aged-gold);
+
+  --color-pen-blue:       var(--color__blue-lit);
+  --color-marker-blue:    var(--color__marker-lit);
+  --color-editor-red:     var(--color__red-lit);
+
+  --color-band-1:         var(--color__deep-slate);
+  --color-band-2:         var(--color__mauve-grey);
+  --color-band-3:         var(--color__sage-band);
+  --color-band-4:         var(--color__teal-band);
+
+  --color-border:         color-mix(in srgb, var(--color__atomic-cream) 26%, var(--color__band-ink));
+  --color-rule:           var(--color__red-lit);
+  --color-grid:           color-mix(in srgb, var(--color__atomic-cream) 15%, var(--color__band-ink));
+
+  --fx-grain-opacity:     0.09;
+}

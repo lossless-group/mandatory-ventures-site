@@ -1,0 +1,185 @@
+---
+/* ============================================================================
+ * ReportCover — the Nitsche banded field ("Exploring the Universe: Nuclear
+ * Fusion", General Dynamics): horizontal muted bands slate → mauve → sage →
+ * teal, split by thin dark lines; one cream shape carrying one primitive red
+ * bar; the name in wide extended caps along the bottom edge.
+ *
+ * The cream shape holds the dictionary entry, typed. The hero sits in the
+ * dark top bands. Tokens: --color-band-1..4, --color-surface / --color-text
+ * (the cream ink, by mode), --color-editor-red, --font-lockup, --font-data.
+ * ========================================================================== */
+import ModeToggle from '../ui/ModeToggle.astro';
+
+interface Props {
+  hero: string;
+  subhead: string;
+  name: string;
+  domain: string;
+  definition: { word: string; part: string; sense: string };
+}
+const { hero, subhead, name, domain, definition } = Astro.props;
+
+/* Eleven bands, interpolated between the four field tokens, so the shift is
+ * slow the way the poster's is. Each entry: [from-token, to-token, mix %]. */
+const bands: Array<[string, string, number]> = [
+  ['--color-band-1', '--color-band-2', 100],
+  ['--color-band-1', '--color-band-2', 88],
+  ['--color-band-1', '--color-band-2', 72],
+  ['--color-band-1', '--color-band-2', 50],
+  ['--color-band-1', '--color-band-2', 24],
+  ['--color-band-2', '--color-band-3', 70],
+  ['--color-band-2', '--color-band-3', 35],
+  ['--color-band-3', '--color-band-4', 100],
+  ['--color-band-3', '--color-band-4', 55],
+  ['--color-band-3', '--color-band-4', 15],
+  ['--color-band-4', '--color-band-1', 82],
+];
+---
+
+<header class="rc">
+  <div class="rc-field" aria-hidden="true">
+    {bands.map(([a, b, p]) => (
+      <span class="rc-band" style={`background: color-mix(in srgb, var(${a}) ${p}%, var(${b}));`}></span>
+    ))}
+  </div>
+
+  <div class="rc-chrome">
+    <span class="rc-domain">{domain}</span>
+    <span class="rc-tools">
+      <a href="/" class="rc-back">directions</a>
+      <ModeToggle />
+    </span>
+  </div>
+
+  <div class="rc-copy">
+    <h1 class="rc-hero">{hero}</h1>
+    <p class="rc-sub">{subhead}</p>
+  </div>
+
+  <div class="rc-figure">
+    <svg class="rc-arrows" viewBox="0 0 40 220" aria-hidden="true" focusable="false">
+      <g class="ink-ballpoint">
+        <line x1="10" y1="0" x2="10" y2="208" />
+        <polyline points="5,198 10,212 15,198" />
+        <line x1="30" y1="0" x2="30" y2="160" />
+        <polyline points="25,150 30,164 35,150" />
+      </g>
+    </svg>
+    <div class="rc-shape">
+      <span class="rc-bar" aria-hidden="true"></span>
+      <p class="rc-def">
+        <dfn>{definition.word}</dfn> <i>{definition.part}</i><br />{definition.sense}
+      </p>
+    </div>
+  </div>
+
+  <p class="rc-lockup">{name}</p>
+</header>
+
+<style>
+  .rc {
+    /* The cream ink: the cream shape and the lettering on the field. */
+    --rc-cream: var(--color-surface);
+    --rc-line: var(--color-band-1);
+    position: relative;
+    isolation: isolate;
+    min-height: clamp(40rem, 96vh, 58rem);
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto 1fr auto auto;
+    padding: 1.25rem var(--page-gutter) 1.5rem;
+    color: var(--rc-cream);
+    overflow: hidden;
+  }
+  :global(html.dark) .rc { --rc-cream: var(--color-text); }
+  :global(html[data-mode="dark"]) .rc { --rc-line: var(--color-background); }
+
+  .rc-field {
+    position: absolute; inset: 0; z-index: -1;
+    display: flex; flex-direction: column;
+  }
+  .rc-band { flex: 1 1 0; border-bottom: 1.5px solid var(--rc-line); }
+  .rc-band:last-child { border-bottom: 0; }
+
+  .rc-chrome {
+    display: flex; justify-content: space-between; align-items: center; gap: 1rem;
+    font-family: var(--font-eyebrow);
+    font-size: 0.72rem; letter-spacing: 0.22em; text-transform: lowercase;
+    /* ModeToggle reads these; on the field they have to be cream. */
+    --color-text: var(--rc-cream);
+    --color-border: color-mix(in srgb, var(--rc-cream) 45%, transparent);
+    --color-primary: var(--rc-cream);
+  }
+  .rc-tools { display: inline-flex; align-items: center; gap: 1rem; }
+  .rc-back { color: var(--rc-cream); text-decoration: none; border-bottom: 1px solid currentColor; }
+  .rc-back::before { content: "\2190\00a0"; }
+  .rc-chrome :global(.theme-mode-toggle) { border-radius: 0; width: 2rem; height: 2rem; }
+
+  .rc-copy { align-self: start; padding-top: clamp(2.5rem, 9vh, 6rem); max-width: 34rem; }
+  .rc-hero {
+    margin: 0;
+    font-family: var(--font-display);
+    font-style: italic; font-weight: 400;
+    font-size: clamp(2rem, 4.6vw, 3.6rem);
+    line-height: 1.04; letter-spacing: -0.01em;
+    text-wrap: balance;
+  }
+  .rc-sub {
+    margin: 1.25rem 0 0;
+    font-family: var(--font-eyebrow);
+    font-size: 0.8rem; letter-spacing: 0.24em; text-transform: lowercase;
+  }
+
+  .rc-figure {
+    position: absolute;
+    right: clamp(1rem, 9vw, 9rem);
+    top: 22%;
+    width: clamp(11rem, 24vw, 19rem);
+    display: flex; flex-direction: column; align-items: center;
+  }
+  .rc-shape {
+    position: relative;
+    width: 100%; aspect-ratio: 3 / 4;
+    background: var(--rc-cream);
+    color: var(--color-band-1);
+    display: flex; align-items: flex-end;
+    padding: 1rem 1.1rem;
+  }
+  :global(html[data-mode="dark"]) .rc-shape { color: var(--color-background); }
+  .rc-bar {
+    position: absolute; left: 50%; top: 14%;
+    width: 13%; height: 46%;
+    transform: translateX(-50%);
+    background: var(--color-editor-red);
+  }
+  .rc-def {
+    margin: 0;
+    font-family: var(--font-data);
+    font-size: 0.82rem; line-height: 1.35;
+  }
+  .rc-def dfn { font-style: normal; font-weight: 700; }
+  .rc-arrows {
+    order: 2; width: 2.2rem; height: auto; margin-top: -2px;
+    stroke: var(--rc-cream); stroke-width: 1.2; fill: none;
+  }
+
+  .rc-lockup {
+    margin: 2rem 0 0;
+    font-family: var(--font-lockup);
+    font-size: clamp(0.78rem, 2.2vw, 1.5rem);
+    letter-spacing: 0.42em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    text-align: center;
+  }
+
+  @media (max-width: 720px) {
+    .rc { min-height: 0; }
+    .rc-figure {
+      position: relative; right: auto; top: auto;
+      width: 58%; margin: 2.5rem 0 0 auto;
+    }
+    .rc-lockup { letter-spacing: 0.24em; }
+  }
+</style>

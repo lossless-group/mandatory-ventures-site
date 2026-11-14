@@ -1,0 +1,26 @@
+---
+/* Non-repro blue: instructions to the printer, written on the board in a
+ * pencil the camera can't see. Production furniture, so decorative and
+ * deliberately terse (it counts toward the word budget). */
+export interface Props { rotate?: number; class?: string; boxed?: boolean }
+const { rotate = 0, class: cls = '', boxed = false } = Astro.props;
+---
+<span class:list={['pu-blue', boxed && 'is-boxed', cls]} style={`--r:${rotate}deg`} aria-hidden="true"><slot /></span>
+<style>
+  .pu-blue {
+    display: inline-block;
+    font-family: var(--font-hand);
+    font-weight: 500;
+    font-size: 1.05rem;
+    line-height: 1;
+    letter-spacing: 0.02em;
+    color: var(--color-board-blue);
+    transform: rotate(var(--r));
+    white-space: nowrap;
+  }
+  .pu-blue.is-boxed {
+    border: 1.5px solid currentColor;
+    border-radius: 40% 55% 45% 50% / 60% 45% 55% 40%;
+    padding: 0.15rem 0.55rem 0.2rem;
+  }
+</style>

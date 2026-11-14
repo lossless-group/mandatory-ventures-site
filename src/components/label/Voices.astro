@@ -1,0 +1,99 @@
+---
+/* Voices — the two audiences, typed as two copies of the same form, large-
+ * scale capital first. Each box is ticked by hand in pen blue (a form fill-
+ * in), and each leaves with its takeaway in the letterhead's italic serif.
+ * The second copy sits a little lower and further right, as if typed on a
+ * second pass.
+ * Reads: --font-body, --font-display, --font-hand, --color-text,
+ *        --color-text-muted, --color-pen-blue, --color-border.
+ */
+import { paragraphs } from './text';
+
+export interface Voice { audience: string; who: string; takeaway: string; body?: string }
+export interface Props { voices: Voice[] }
+const { voices } = Astro.props;
+---
+
+<section class="lb-voices" aria-label="The two voices">
+  {voices.map((v, i) => (
+    <article class="lb-voice" style={`--n:${i}`}>
+      <h2 class="lb-voice__aud">
+        <span class="lb-voice__box" aria-hidden="true">[<span class="lb-voice__tick">x</span>]</span>
+        {v.audience}
+      </h2>
+      <p class="lb-voice__who">{v.who}</p>
+      <div class="lb-voice__body">
+        {paragraphs(v.body).map((p) => <p>{p}</p>)}
+      </div>
+      <p class="lb-voice__take">{v.takeaway}</p>
+    </article>
+  ))}
+</section>
+
+<style>
+  .lb-voices {
+    --step: clamp(0.85rem, 3.2vw, 2.1rem);
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: clamp(2rem, 6vw, 4.5rem);
+    max-width: calc(var(--page-measure) + 8rem);
+    margin-top: clamp(3.5rem, 9vw, 6rem);
+    padding-left: var(--step);
+  }
+  .lb-voice { min-width: 0; margin-top: calc(var(--n) * 2.4rem); }
+
+  .lb-voice__aud {
+    margin: 0;
+    font-family: var(--font-body);
+    font-weight: 400;
+    font-size: 0.95rem;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--color-text);
+  }
+  .lb-voice__box { margin-right: 0.8ch; letter-spacing: 0; }
+  .lb-voice__tick {
+    display: inline-block;
+    width: 1ch;
+    text-align: center;
+    font-family: var(--font-hand);
+    font-size: 1.35em;
+    line-height: 0;
+    color: var(--color-pen-blue);
+    transform: translateY(0.04em) rotate(-8deg);
+  }
+
+  .lb-voice__who {
+    margin: 0.5rem 0 0 calc(var(--step) * 1);
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    line-height: 1.55;
+    color: var(--color-text);
+  }
+  .lb-voice__body {
+    margin: 0.7rem 0 0 calc(var(--step) * 1);
+    font-family: var(--font-body);
+    font-size: 0.86rem;
+    line-height: 1.7;
+    color: var(--color-text-muted);
+  }
+  .lb-voice__body p { margin: 0 0 0.8em; }
+
+  .lb-voice__take {
+    margin: 0.9rem 0 0 calc(var(--step) * 1);
+    padding-top: 0.7rem;
+    border-top: 1px solid var(--color-border);
+    max-width: 24ch;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 1.2rem;
+    line-height: 1.25;
+    text-transform: lowercase;
+    color: var(--color-text);
+  }
+
+  @media (max-width: 720px) {
+    .lb-voices { grid-template-columns: minmax(0, 1fr); row-gap: 3rem; padding-left: 0; }
+    .lb-voice { margin-top: 0; margin-left: calc(var(--n) * var(--step)); }
+  }
+</style>

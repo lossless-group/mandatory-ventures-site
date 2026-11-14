@@ -1,0 +1,105 @@
+---
+/* The chooser. Internal: three directions over one content spine. When one is
+ * picked it is promoted to `/` and the other two are deleted (their route,
+ * component folder and theme file). */
+import BaseThemeLayout from '../layouts/BaseThemeLayout.astro';
+import ModeToggle from '../components/ui/ModeToggle.astro';
+import { BRAND, WORD_BUDGET } from '../lib/site';
+
+const directions = [
+  {
+    slug: 'label',
+    name: 'Label',
+    stance: 'Closest to the north star',
+    blurb:
+      "The whole site is Goldsholl's parcel label: a printed letterhead, one red hairline rule, typed content below, and deadpan official small print. The quietest of the three.",
+  },
+  {
+    slug: 'report',
+    name: 'Annual Report',
+    stance: 'Reinterprets the source',
+    blurb:
+      'A 1960s annual report in the Nitsche manner: a banded cover, extended-caps lockup, the curve as a typed chart with marker data, silhouette plates, a ledger table.',
+  },
+  {
+    slug: 'paste-up',
+    name: 'Paste-Up',
+    stance: 'Flair, fought onto paper',
+    blurb:
+      'The page as a mechanical mid-production: typed slips pasted on a board, a misregistered two-color headline, halftone screens, crop marks, red-pen corrections, one cut-out joke.',
+  },
+];
+---
+
+<BaseThemeLayout
+  title="Mandatory Ventures: three directions"
+  description="Three design directions for mandatory.ventures over one content spine."
+  theme="label"
+  mode="light"
+>
+  <header class="chooser-chrome">
+    <span class="mark">{BRAND.domain} &middot; design directions</span>
+    <ModeToggle />
+  </header>
+
+  <main class="chooser" id="main">
+    <p class="eyebrow">Internal &middot; not the homepage</p>
+    <h1>three ways to print <em>the same page.</em></h1>
+    <p class="lede">
+      Every direction reads the same narrative, the same four sections, the same
+      two voices and the same disclaimer. Only the form changes. Each one also
+      renders in light, dark and vibrant.
+    </p>
+
+    <ul class="facts">
+      <li><span class="v tabular">3</span> directions</li>
+      <li><span class="v tabular">3</span> modes each</li>
+      <li><span class="v tabular">{WORD_BUDGET}</span> word ceiling</li>
+    </ul>
+
+    <ol class="directions">
+      {directions.map((d, i) => (
+        <li>
+          <a href={`/${d.slug}/`}>
+            <span class="num tabular">{String(i + 1).padStart(2, '0')}</span>
+            <span class="stance">{d.stance}</span>
+            <h2>{d.name}</h2>
+            <p>{d.blurb}</p>
+            <span class="go">open &rarr;</span>
+          </a>
+        </li>
+      ))}
+    </ol>
+
+    <nav class="refs" aria-label="Reference pages">
+      <a href="/brand-kit/">Brand kit</a>
+      <a href="/design-system/">Design system</a>
+    </nav>
+  </main>
+</BaseThemeLayout>
+
+<style>
+  .chooser-chrome {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 1rem var(--page-gutter, 1.5rem);
+    border-bottom: 1px solid var(--color-editor-red);
+  }
+  .mark { font-family: var(--font-eyebrow); font-size: 0.75rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--color-text-muted); }
+  .chooser { max-width: 68rem; margin: 0 auto; padding: clamp(2.5rem, 8vw, 6rem) var(--page-gutter, 1.5rem) 5rem; }
+  .eyebrow { font-family: var(--font-data); font-size: 0.8rem; color: var(--color-editor-red); margin: 0 0 1rem; }
+  h1 { font-family: var(--font-display); font-style: italic; font-weight: 400; font-size: clamp(2.2rem, 6vw, 4rem); line-height: 1.05; margin: 0; }
+  h1 em { color: var(--color-pen-blue); }
+  .lede { font-family: var(--font-body); max-width: 56ch; color: var(--color-text-muted); margin: 1.25rem 0 0; }
+  .facts { display: flex; flex-wrap: wrap; gap: 1.5rem; list-style: none; padding: 0; margin: 2rem 0 0; font-family: var(--font-eyebrow); font-size: 0.75rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--color-text-muted); }
+  .facts .v { font-size: 1.1rem; color: var(--color-text); margin-right: 0.35rem; letter-spacing: 0; }
+  .directions { list-style: none; padding: 0; margin: 3rem 0 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr)); gap: 1.25rem; }
+  .directions a { display: grid; gap: 0.5rem; height: 100%; padding: 1.5rem; text-decoration: none; color: inherit; background: var(--color-surface); border: 1px solid var(--color-border); }
+  .directions a:hover { border-color: var(--color-editor-red); }
+  .num { font-size: 0.8rem; color: var(--color-text-faint); }
+  .stance { font-family: var(--font-eyebrow); font-size: 0.7rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--color-editor-red); }
+  h2 { font-family: var(--font-display); font-style: italic; font-weight: 400; font-size: 2rem; margin: 0; }
+  .directions p { margin: 0; font-size: 0.95rem; color: var(--color-text-muted); }
+  .go { font-family: var(--font-data); font-size: 0.85rem; color: var(--color-pen-blue); margin-top: auto; }
+  .refs { display: flex; gap: 1.5rem; margin-top: 3rem; padding-top: 1rem; border-top: 1px solid var(--color-rule); font-family: var(--font-data); font-size: 0.9rem; }
+  .refs a { color: var(--color-pen-blue); }
+</style>

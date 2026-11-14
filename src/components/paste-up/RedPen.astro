@@ -1,0 +1,47 @@
+---
+/* The editor's red pen: a margin note written on the board or on a slip.
+ * Content is always a section's editor_note; this component never invents
+ * a joke. Optional ballpoint arrow pointing at what it's complaining about. */
+export interface Props {
+  rotate?: number;
+  arrow?: 'left' | 'right' | 'up' | 'down' | 'none';
+  on?: 'board' | 'slip';
+  class?: string;
+}
+const { rotate = -3, arrow = 'none', on = 'slip', class: cls = '' } = Astro.props;
+const arrows: Record<string, string> = {
+  left:  'M58 14 C 40 6, 22 10, 6 18 M6 18 l9 -8 M6 18 l11 3',
+  right: 'M4 16 C 22 6, 40 8, 56 16 M56 16 l-10 -7 M56 16 l-11 4',
+  up:    'M30 40 C 24 28, 26 14, 32 4 M32 4 l-8 8 M32 4 l5 10',
+  down:  'M28 4 C 34 16, 32 28, 26 40 M26 40 l-4 -11 M26 40 l9 -7',
+};
+---
+<aside class:list={['pu-redpen', `on-${on}`, `arrow-${arrow}`, cls]} style={`--r:${rotate}deg`} aria-label="Editor's note">
+  {arrow !== 'none' && (
+    <svg class="pu-redpen-arrow ink-ballpoint" viewBox={arrow === 'up' || arrow === 'down' ? '0 0 60 44' : '0 0 62 26'} aria-hidden="true" focusable="false">
+      <path d={arrows[arrow]} fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+    </svg>
+  )}
+  <p><slot /></p>
+</aside>
+<style>
+  .pu-redpen {
+    font-family: var(--font-hand);
+    font-weight: 700;
+    font-size: clamp(1.25rem, 1.05rem + 0.8vw, 1.6rem);
+    line-height: 1.05;
+    color: var(--color-editor-red);
+    transform: rotate(var(--r));
+    max-width: 17rem;
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+  }
+  .pu-redpen.on-board { color: var(--color-board-red); }
+  .pu-redpen p { margin: 0; }
+  .pu-redpen-arrow { width: 3.4rem; height: auto; flex: none; }
+  .arrow-up, .arrow-down { flex-direction: column; align-items: flex-start; }
+  .arrow-down { flex-direction: column-reverse; }
+  .arrow-right { flex-direction: row-reverse; }
+  .arrow-up .pu-redpen-arrow, .arrow-down .pu-redpen-arrow { width: 2.4rem; }
+</style>

@@ -1,0 +1,36 @@
+---
+/* "For position only": the box where a halftone will be stripped in later.
+ * A coarse dot screen, a blue-pencil X, the FPO mark. Decorative. */
+export interface Props { class?: string }
+const { class: cls = '' } = Astro.props;
+---
+<span class:list={['pu-fpo', cls]} aria-hidden="true">
+  <svg viewBox="0 0 100 100" preserveAspectRatio="none" focusable="false">
+    <path d="M2 2 L98 98 M98 2 L2 98" />
+  </svg>
+  <b>FPO</b>
+</span>
+<style>
+  .pu-fpo {
+    position: relative;
+    display: block;
+    aspect-ratio: 4 / 5;
+    border: 1px solid var(--color-text);
+    background-color: var(--color-surface-raised);
+    background-image: radial-gradient(circle, var(--color-halftone) 38%, transparent 41%);
+    background-size: var(--halftone-size) var(--halftone-size);
+  }
+  svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+  path { stroke: var(--color-pen-blue); stroke-width: 1; vector-effect: non-scaling-stroke; fill: none; }
+  b {
+    position: absolute;
+    left: 50%; top: 50%;
+    transform: translate(-50%, -50%) rotate(-8deg);
+    font-family: var(--font-hand);
+    font-size: 1.5rem;
+    color: var(--color-pen-blue);
+    background: var(--color-surface);
+    padding: 0 0.35rem;
+    line-height: 1.1;
+  }
+</style>

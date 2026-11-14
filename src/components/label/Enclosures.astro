@@ -1,0 +1,79 @@
+---
+/* Enclosures — connect and Mandatory Reading, set the way a letter lists what
+ * comes with it. Connect is a line of spaced geometric caps (the letterhead's
+ * hard-facts voice); the handles are links in pen blue. Reading is typed
+ * after "Encl.:".
+ * Reads: --font-eyebrow, --font-body, --font-display, --color-text,
+ *        --color-text-muted, --color-pen-blue.
+ */
+export interface Link { label: string; handle: string; href: string }
+export interface Reading { title: string; href: string }
+export interface Props { connect: readonly Link[]; reading: Reading[] }
+const { connect, reading } = Astro.props;
+---
+
+<section class="lb-encl" aria-labelledby="lb-encl-h">
+  <h2 id="lb-encl-h" class="sr-only">Connect</h2>
+  <ul class="lb-encl__connect" role="list">
+    {connect.map((c) => (
+      <li>
+        <span class="lb-encl__k">{c.label}</span>
+        <a href={c.href} rel="me noopener" target="_blank">{c.handle}</a>
+      </li>
+    ))}
+  </ul>
+
+  {reading.length > 0 && (
+    <p class="lb-encl__reading">
+      <span class="lb-encl__label">Encl.:</span>
+      <span class="lb-encl__list">
+        <span>Mandatory Reading.</span>
+        {reading.map((r) => <a href={r.href}>{r.title}</a>)}
+      </span>
+    </p>
+  )}
+</section>
+
+<style>
+  .lb-encl {
+    --step: clamp(0.85rem, 3.2vw, 2.1rem);
+    margin-top: clamp(4rem, 10vw, 7rem);
+    padding-left: calc(var(--step) * 2);
+  }
+
+  .lb-encl__connect {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem 2.6em;
+    font-family: var(--font-eyebrow);
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--color-text);
+  }
+  .lb-encl__k { margin-right: 1.1em; }
+  .lb-encl a {
+    color: var(--color-pen-blue);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.28em;
+  }
+  .lb-encl a:hover { text-decoration-thickness: 2px; }
+
+  .lb-encl__reading {
+    display: flex;
+    gap: 1.2ch;
+    margin: 1.8rem 0 0 var(--step);
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: var(--color-text);
+  }
+  .lb-encl__label { flex: none; }
+  .lb-encl__list { display: flex; flex-wrap: wrap; column-gap: 1.2ch; }
+  .lb-encl__list a { font-family: var(--font-display); font-style: italic; font-size: 1.08rem; }
+</style>

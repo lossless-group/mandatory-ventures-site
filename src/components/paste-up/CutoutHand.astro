@@ -1,0 +1,72 @@
+---
+/* THE ONE GILLIAM MOMENT. A giant hand, cut out of a halftone photo with
+ * scissors (paper border left on, hard edges, a paper-on-paper shadow),
+ * reaching in from off the board in a pinstripe sleeve to drop the red
+ * plate into the headline. It hasn't quite let go, which is why plate two
+ * is misregistered. No raster: an SVG built from tokens.
+ *
+ * Geometry: viewBox 360×160, the pinch point sits at (44, 78). The parent
+ * positions the hand so that point lands on the corner it is holding. */
+export interface Props { class?: string }
+const { class: cls = '' } = Astro.props;
+
+const hand =
+  'M210 50 C 190 42, 160 40, 136 46 C 112 50, 80 54, 54 60 C 40 63, 34 74, 46 77 ' +
+  'C 68 80, 96 77, 114 77 C 106 85, 108 93, 118 97 C 108 102, 110 110, 122 113 ' +
+  'C 100 106, 74 94, 56 87 C 44 83, 40 93, 52 96 C 84 107, 120 125, 160 125 ' +
+  'C 186 125, 200 123, 214 119 Z';
+const shade = 'M122 113 C 100 106, 74 94, 56 87 C 44 83, 40 93, 52 96 C 84 107, 120 125, 160 125 C 186 125, 200 123, 214 119 L 214 96 C 190 104, 150 112, 122 113 Z';
+const cuff = 'M204 42 L 242 34 L 248 126 L 208 120 Z';
+const sleeve = 'M238 30 L 362 14 L 362 146 L 244 130 Z';
+---
+<svg class:list={['pu-hand', cls]} viewBox="0 0 360 160" aria-hidden="true" focusable="false">
+  <defs>
+    <pattern id="pu-hand-dots" width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <circle cx="2.5" cy="2.5" r="1.05" class="ink" />
+    </pattern>
+    <pattern id="pu-hand-dots-heavy" width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <circle cx="2.5" cy="2.5" r="1.9" class="ink" />
+    </pattern>
+    <pattern id="pu-pinstripe" width="9" height="9" patternUnits="userSpaceOnUse" patternTransform="rotate(-8)">
+      <rect width="9" height="9" class="ink" />
+      <rect x="4" width="1" height="9" class="paper stripe" />
+    </pattern>
+  </defs>
+
+  <!-- the scissor edge: everything once more, fat, in paper -->
+  <g class="edge">
+    <path d={sleeve} /><path d={cuff} /><path d={hand} />
+  </g>
+
+  <path d={sleeve} fill="url(#pu-hand-dots)" class="sleeve" />
+  <path d={sleeve} fill="url(#pu-pinstripe)" />
+  <path d={cuff} class="paper line" />
+  <circle cx="227" cy="82" r="5" class="link" />
+  <path d={hand} class="paper" />
+  <path d={hand} fill="url(#pu-hand-dots)" />
+  <path d={shade} fill="url(#pu-hand-dots-heavy)" />
+  <path d={hand} class="line" fill="none" />
+  <!-- knuckle creases -->
+  <path d="M116 77 C 128 76, 140 80, 150 86 M118 97 C 130 98, 142 102, 152 104 M150 50 C 160 56, 170 58, 182 56" class="line thin" fill="none" />
+</svg>
+
+<style>
+  .pu-hand {
+    display: block;
+    overflow: visible;
+    filter: drop-shadow(4px 6px 0 var(--color-cutout-shadow));
+  }
+  .ink { fill: var(--color-cutout); }
+  .paper { fill: var(--color-cutout-paper); }
+  .stripe { opacity: 0.45; }
+  .sleeve { fill: var(--color-cutout); }
+  .edge path {
+    fill: var(--color-cutout-paper);
+    stroke: var(--color-cutout-paper);
+    stroke-width: 9;
+    stroke-linejoin: round;
+  }
+  .line { stroke: var(--color-cutout); stroke-width: 2.4; stroke-linejoin: round; }
+  .line.thin { stroke-width: 1.6; stroke-linecap: round; }
+  .link { fill: var(--color-editor-red); }
+</style>

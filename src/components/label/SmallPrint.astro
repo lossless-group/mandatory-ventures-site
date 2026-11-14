@@ -1,0 +1,67 @@
+---
+/* SmallPrint — the label's official, deadpan footer: a solid black arrow,
+ * "POSTMASTER:" in small caps, and the plain instruction after it, played
+ * straight. Then the page furniture: the way back to the chooser and the
+ * mode toggle, small and out of the way.
+ * Reads: --font-eyebrow, --color-text, --color-text-muted, --color-border.
+ */
+import ModeToggle from '@components/ui/ModeToggle.astro';
+import { DISCLAIMER } from '@lib/site';
+
+export interface Props { backHref?: string; backLabel?: string }
+const { backHref = '/', backLabel = 'Directions' } = Astro.props;
+---
+
+<footer class="lb-small">
+  <p class="lb-small__notice">
+    <svg class="lb-small__arrow" viewBox="0 0 14 14" aria-hidden="true" focusable="false">
+      <path d="M1 2.2 L6.5 2.2 L6.5 0 L13 7 L6.5 14 L6.5 11.8 L1 11.8 Z" />
+    </svg>
+    <span class="lb-small__k">Postmaster:</span>
+    <span>{DISCLAIMER}</span>
+  </p>
+
+  <div class="lb-small__chrome">
+    <a href={backHref}>← {backLabel}</a>
+    <ModeToggle />
+  </div>
+</footer>
+
+<style>
+  .lb-small {
+    --step: clamp(0.85rem, 3.2vw, 2.1rem);
+    margin-top: clamp(3rem, 8vw, 5rem);
+    padding: 0 0 2.5rem calc(var(--step) * 3);
+  }
+  .lb-small__notice {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    column-gap: 0.7em;
+    row-gap: 0.2em;
+    margin: 0;
+    font-family: var(--font-eyebrow);
+    font-size: 0.74rem;
+    line-height: 1.5;
+    letter-spacing: 0.03em;
+    color: var(--color-text);
+  }
+  .lb-small__arrow { width: 0.85rem; height: 0.85rem; align-self: center; fill: var(--color-text); }
+  .lb-small__k { font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; }
+
+  .lb-small__chrome {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 3.5rem;
+    padding-top: 0.8rem;
+    border-top: 1px solid var(--color-border);
+    font-family: var(--font-eyebrow);
+    font-size: 0.64rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+  }
+  .lb-small__chrome a { color: var(--color-text-muted); text-decoration: none; }
+  .lb-small__chrome a:hover { color: var(--color-text); text-decoration: underline; text-underline-offset: 0.25em; }
+</style>

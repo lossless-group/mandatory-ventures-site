@@ -1,0 +1,73 @@
+---
+/* ============================================================================
+ * Ledger — the Northwest Airlines 1960 table. Two variants:
+ *   quiet  borderless, set on the paper, figures right-aligned.
+ *   ruled  a hairline box in the one accent ink (--color-rule), a ruled
+ *          header row, thin rules between columns. For the headline rows.
+ * Typewriter throughout (--font-data). Columns with `align: 'end'` are
+ * figures and get tabular numerals.
+ * ========================================================================== */
+interface Column { key: string; label: string; align?: 'start' | 'end' }
+interface Props {
+  caption: string;
+  columns: Column[];
+  rows: Array<Record<string, string | number>>;
+  variant?: 'quiet' | 'ruled';
+}
+const { caption, columns, rows, variant = 'ruled' } = Astro.props;
+---
+
+<table class:list={['lg', `lg--${variant}`]}>
+  <caption>{caption}</caption>
+  <thead>
+    <tr>
+      {columns.map((c) => <th scope="col" class:list={[c.align === 'end' && 'lg-num']}>{c.label}</th>)}
+    </tr>
+  </thead>
+  <tbody>
+    {rows.map((r) => (
+      <tr>
+        {columns.map((c, i) =>
+          i === 0
+            ? <th scope="row" class:list={[c.align === 'end' && 'lg-num']}>{r[c.key]}</th>
+            : <td class:list={[c.align === 'end' && 'lg-num']}>{r[c.key]}</td>
+        )}
+      </tr>
+    ))}
+  </tbody>
+</table>
+
+<style>
+  .lg {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--font-data);
+    font-size: 0.86rem;
+    line-height: 1.35;
+    color: var(--color-text);
+  }
+  .lg caption {
+    caption-side: top;
+    text-align: center;
+    padding: 0 0 0.9rem;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 1.15rem;
+    color: var(--color-text);
+  }
+  .lg th, .lg td { padding: 0.55rem 0.7rem; text-align: left; vertical-align: top; font-weight: 400; }
+  .lg thead th {
+    font-family: var(--font-eyebrow);
+    font-size: 0.68rem; letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--color-text-muted);
+  }
+  .lg .lg-num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+  .lg--ruled { border: 1.5px solid var(--color-rule); }
+  .lg--ruled caption { border: 1.5px solid var(--color-rule); border-bottom: 0; padding: 0.8rem 0.6rem; }
+  .lg--ruled thead th { border-bottom: 1.5px solid var(--color-rule); }
+  .lg--ruled th + th, .lg--ruled th + td, .lg--ruled td + td { border-left: 1px solid var(--color-rule); }
+  .lg--ruled tbody tr + tr > * { border-top: 1px solid var(--color-rule); }
+
+  .lg--quiet tbody tr + tr > * { padding-top: 0.25rem; }
+</style>

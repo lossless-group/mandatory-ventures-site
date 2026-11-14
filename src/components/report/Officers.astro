@@ -1,0 +1,46 @@
+---
+/* ============================================================================
+ * Officers — the "Officers and Directors" page of an annual report: names in
+ * spaced caps, roles in italic serif beneath, set quietly on the paper with
+ * dotted leaders. Only the people in PEOPLE; no one is added for effect.
+ * ========================================================================== */
+interface Person { name: string; role: string }
+interface Props { heading: string; people: readonly Person[] }
+const { heading, people } = Astro.props;
+---
+
+<section class="of" aria-labelledby="officers-head">
+  <h3 class="of-head" id="officers-head">{heading}</h3>
+  <dl class="of-list">
+    {people.map((p) => (
+      <div class="of-row">
+        <dt>{p.name}</dt>
+        <dd>{p.role}</dd>
+      </div>
+    ))}
+  </dl>
+</section>
+
+<style>
+  .of { text-align: center; }
+  .of-head {
+    margin: 0 0 1.75rem;
+    font-family: var(--font-lockup);
+    font-weight: 400;
+    font-size: 0.78rem; letter-spacing: 0.42em; text-transform: uppercase;
+  }
+  .of-list { margin: 0; }
+  .of-row + .of-row { margin-top: 1.5rem; }
+  .of-row dt {
+    font-family: var(--font-eyebrow);
+    font-size: 0.95rem; font-weight: 500;
+    letter-spacing: 0.2em; text-transform: uppercase;
+  }
+  .of-row dd {
+    margin: 0.45rem auto 0;
+    max-width: 22rem;
+    font-family: var(--font-body); font-style: italic;
+    color: var(--color-text-muted);
+    line-height: 1.45;
+  }
+</style>

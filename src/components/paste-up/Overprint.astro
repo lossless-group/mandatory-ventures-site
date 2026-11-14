@@ -1,0 +1,26 @@
+---
+/* Two inks crossing, Nitsche-style: a solid teal disc and a coarse black
+ * dot-screen disc, printed over each other so they darken where they meet.
+ * The smallest, most important mark sits in the overlap in red. No legend,
+ * no labels: decorative. */
+---
+<svg class="pu-op" viewBox="0 0 320 240" aria-hidden="true" focusable="false">
+  <defs>
+    <pattern id="pu-op-screen" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <circle cx="4" cy="4" r="2.1" class="k" />
+    </pattern>
+  </defs>
+  <circle cx="122" cy="122" r="92" class="teal overprint" />
+  <circle cx="204" cy="118" r="92" fill="url(#pu-op-screen)" class="overprint" />
+  <circle cx="204" cy="118" r="92" class="rim ink-ballpoint" />
+  <circle cx="163" cy="120" r="9" class="red" />
+  <path d="M163 20 v20 M163 200 v20" class="tick" />
+</svg>
+<style>
+  .pu-op { display: block; width: 100%; height: auto; overflow: visible; }
+  .k { fill: var(--color-cutout); }
+  .teal { fill: var(--color-halftone); opacity: 0.9; }
+  .rim { fill: none; stroke: var(--color-cutout); stroke-width: 1.5; }
+  .red { fill: var(--color-editor-red); }
+  .tick { stroke: var(--color-board-blue); stroke-width: 1.2; stroke-dasharray: 3 3; }
+</style>

@@ -1,0 +1,36 @@
+---
+/* PostalStamp — the rubber cancellation left on the label, slightly crooked
+ * and cropped by the top edge of the sheet. Imperfection as proof the thing
+ * is real. The ring carries the domain and the sign-off; nothing else.
+ * Reads: --color-text, --font-eyebrow.
+ */
+import { BRAND } from '@lib/site';
+
+const ring = `${BRAND.sign_off.replace(/\.$/, '')} ★ ${BRAND.domain} ★`;
+---
+
+<svg class="lb-stamp ink-typewriter" viewBox="0 0 260 140" aria-hidden="true" focusable="false">
+  <defs>
+    <path id="lb-stamp-ring" d="M70 70 m-50 0 a50 50 0 1 1 100 0 a50 50 0 1 1 -100 0" />
+  </defs>
+  <circle cx="70" cy="70" r="62" class="lb-stamp__line" />
+  <circle cx="70" cy="70" r="38" class="lb-stamp__line" />
+  <text class="lb-stamp__text"><textPath href="#lb-stamp-ring" textLength="300">{ring.toUpperCase()}</textPath></text>
+  <!-- cancellation bars -->
+  <path class="lb-stamp__line" d="M138 52 q15 -6 30 0 t30 0 t30 0 t30 0" />
+  <path class="lb-stamp__line" d="M138 66 q15 -6 30 0 t30 0 t30 0 t30 0" />
+  <path class="lb-stamp__line" d="M138 80 q15 -6 30 0 t30 0 t30 0 t30 0" />
+  <path class="lb-stamp__line" d="M138 94 q15 -6 30 0 t30 0 t30 0 t30 0" />
+</svg>
+
+<style>
+  .lb-stamp { display: block; width: 100%; height: auto; overflow: visible; }
+  .lb-stamp__line { fill: none; stroke: var(--color-text); stroke-width: 3.2; }
+  .lb-stamp__text {
+    fill: var(--color-text);
+    font-family: var(--font-eyebrow);
+    font-weight: 600;
+    font-size: 11.5px;
+    letter-spacing: 0.08em;
+  }
+</style>

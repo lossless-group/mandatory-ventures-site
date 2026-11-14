@@ -1,0 +1,30 @@
+---
+/* EditorNote — the editor's red pen in the margin. The humor channel, one per
+ * section at most. Caveat in --color-editor-red, a ballpoint tick before it. */
+interface Props { text: string; align?: 'start' | 'end' }
+const { text, align = 'start' } = Astro.props;
+---
+
+<aside class:list={['en', `en--${align}`]} aria-label="Editor's note">
+  <svg class="en-tick ink-ballpoint" viewBox="0 0 40 24" aria-hidden="true" focusable="false">
+    <path d="M2 14 C 10 10, 22 9, 34 12 M27 6 L35 12 L27 18" />
+  </svg>
+  <span>{text}</span>
+</aside>
+
+<style>
+  .en {
+    display: flex; align-items: flex-start; gap: 0.45rem;
+    margin: 1.75rem 0 0;
+    max-width: 22rem;
+    font-family: var(--font-hand);
+    font-size: 1.45rem; line-height: 1.12;
+    color: var(--color-editor-red);
+    transform: rotate(-1.6deg);
+  }
+  .en--end { margin-left: auto; transform: rotate(1.2deg); }
+  .en-tick {
+    flex: 0 0 auto; width: 2.1rem; margin-top: 0.3rem;
+    fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
+  }
+</style>

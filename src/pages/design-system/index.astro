@@ -1,0 +1,244 @@
+---
+/* Developer-facing catalogue. The one page where DIRECTION is switchable at
+ * runtime, so the shared parts can be seen under all nine combinations
+ * (three directions × three modes) without leaving the page.
+ *
+ * Per-direction components are inventoried here and seen in context on
+ * their direction's page. When a direction is promoted, its components move
+ * into the live sections of this page. */
+import BaseThemeLayout from '../../layouts/BaseThemeLayout.astro';
+import ModeToggle from '../../components/ui/ModeToggle.astro';
+import { WORD_BUDGET, DIRECTIONS } from '../../lib/site';
+
+const semantic = [
+  ['--color-background', 'The stock'],
+  ['--color-surface', 'A slip or panel on it'],
+  ['--color-surface-raised', 'A slip on that'],
+  ['--color-text', 'Typewriter black: primary content'],
+  ['--color-text-muted', 'Supporting copy'],
+  ['--color-text-faint', 'Furniture, folios'],
+  ['--color-pen-blue', "Links, annotations: the author's hand"],
+  ['--color-marker-blue', 'Chart data, highlights'],
+  ['--color-editor-red', 'Emphasis, corrections, the joke'],
+  ['--color-accent', "The direction's second ink"],
+  ['--color-band-1', 'Nitsche band 1'],
+  ['--color-band-2', 'Nitsche band 2'],
+  ['--color-band-3', 'Nitsche band 3'],
+  ['--color-band-4', 'Nitsche band 4'],
+  ['--color-border', 'Quiet division'],
+  ['--color-rule', 'Structural division'],
+];
+const fonts = [
+  ['--font-display', 'Coordinating capital into the world’s most important companies.'],
+  ['--font-body', 'Large-scale capital doesn’t want to invest in startups.'],
+  ['--font-data', 'RE: FROM STARTUP TO SCALEUP. 0.14 · 0.62 · 0.90'],
+  ['--font-eyebrow', 'MANDATORY.VENTURES · X · LINKEDIN'],
+  ['--font-hand', 'see curve. note where the pretending starts.'],
+  ['--font-lockup', 'MANDATORY VENTURES'],
+];
+const inventory: Record<string, [string, string][]> = {
+  label: [
+    ['Letterhead', 'The printed zone and the one red hairline rule'],
+    ['LabelMark', 'The small witty mark: hatched ledger, black stamp, red scribble'],
+    ['PostalStamp', 'Rubber cancellation, crooked and cropped'],
+    ['AddressBlock', 'Faded, staggered typewriter caps under the rule'],
+    ['TypedEntry', 'One section typed onto the form'],
+    ['EditorNote', 'Red-pen margin note'],
+    ['Curve', 'Typewriter frame, felt-tip curve, ballpoint notes'],
+    ['Voices', 'Two typed copies of one form, ticked in pen blue'],
+    ['Signatures', 'Hand signature over a typed name'],
+    ['Enclosures', 'Connect and Mandatory Reading as "Encl.:"'],
+    ['SmallPrint', '"▶ POSTMASTER:" footer'],
+  ],
+  report: [
+    ['ReportCover', 'Nitsche banded field, cream block, red bar, lockup'],
+    ['RunningHead', 'Section numeral, folio, hairline'],
+    ['CurveChart', 'Central 1958 chart: typed frame, marker data'],
+    ['Ledger', 'Northwest 1960 table: quiet and red-ruled variants'],
+    ['VoiceColumn', 'One column of the letter to stockholders'],
+    ['Officers', 'People as an officers list'],
+    ['Plate', 'Full-bleed illustration page of a spread'],
+    ['JetSilhouette', 'Flat one-ink silhouette (default illustration)'],
+    ['OverprintDiscs', 'Atoms for Peace transparent discs'],
+    ['ReportColumn', 'Narrow column facing a plate'],
+    ['EditorNote', 'Red-pen margin note'],
+    ['ReadingInsert', 'Mandatory Reading as a loose insert'],
+    ['BackCover', 'Sign-off, connect, disclaimer, lockup'],
+  ],
+  'paste-up': [
+    ['Headline', 'Letraset Bodoni, rubbed down by hand, misregistered red plate'],
+    ['CutoutHand', 'The one Gilliam moment: halftone hand lowering a slip'],
+    ['Slip', 'Typed slip pasted on the board'],
+    ['SectionCopy', 'One section on its slip'],
+    ['Curve', 'Typed frame, dot-screen area, marker curve'],
+    ['RedPen', 'Editor note with a ballpoint arrow'],
+    ['BluePencil', 'Non-repro instructions to the printer'],
+    ['CropMarks', 'Trim marks'],
+    ['RegMark', 'Registration target'],
+    ['ColorBar', 'Press colour bar: the whole ink budget'],
+    ['FpoBox', 'For-position-only halftone box'],
+    ['Overprint', 'Teal disc crossed with a black dot screen'],
+  ],
+};
+---
+
+<BaseThemeLayout
+  title="Design system · Mandatory Ventures"
+  description="The shared parts, switchable across all three directions and all three modes."
+  theme="label"
+  mode="light"
+  themeSwitchable={true}
+>
+  <header class="ds-chrome">
+    <a class="back" href="/">&larr; directions</a>
+    <div class="ctl">
+      <div class="pick" role="group" aria-label="Direction">
+        {DIRECTIONS.map((d, i) => (
+          <button type="button" data-set-theme={d.slug} aria-pressed={i === 0 ? 'true' : 'false'}>{d.name}</button>
+        ))}
+      </div>
+      <ModeToggle />
+    </div>
+  </header>
+
+  <main class="ds" id="main">
+    <p class="eyebrow">Design system</p>
+    <h1>nine combinations, one set of inks.</h1>
+    <p class="lede">
+      Three directions &times; three modes. Switch both above. Components read only
+      these semantic tokens; the raw palette lives in <code>global.css</code> and is
+      named on <a href="/brand-kit/">the brand kit</a>.
+    </p>
+
+    <section>
+      <h2>Semantic colour</h2>
+      <ul class="sw">
+        {semantic.map(([t, r]) => (
+          <li><span class="chip" style={`background:var(${t})`}></span><span><code>{t}</code><br />{r}</span></li>
+        ))}
+      </ul>
+    </section>
+
+    <section>
+      <h2>Type tokens</h2>
+      <ul class="type">
+        {fonts.map(([t, s]) => (
+          <li><span class="spec" style={`font-family:var(${t})`}>{s}</span><code>{t}</code></li>
+        ))}
+      </ul>
+    </section>
+
+    <section>
+      <h2>Shared print utilities <span class="hn">global.css + PrintFilters</span></h2>
+      <div class="demo-grid">
+        <figure>
+          <svg viewBox="0 0 300 40" aria-hidden="true"><line class="ink-typewriter" x1="6" y1="20" x2="294" y2="20" stroke="var(--color-text)" stroke-width="1.5" /></svg>
+          <figcaption><code>.ink-typewriter</code> rules, frames</figcaption>
+        </figure>
+        <figure>
+          <svg viewBox="0 0 300 40" aria-hidden="true"><path class="ink-marker" d="M6 24 C 100 14, 200 30, 294 18" fill="none" stroke="var(--color-marker-blue)" stroke-width="5" stroke-linecap="round" /></svg>
+          <figcaption><code>.ink-marker</code> data, emphasis</figcaption>
+        </figure>
+        <figure>
+          <svg viewBox="0 0 300 40" aria-hidden="true"><path class="ink-ballpoint" d="M6 22 C 100 18, 200 26, 294 20" fill="none" stroke="var(--color-pen-blue)" stroke-width="1.2" stroke-linecap="round" /></svg>
+          <figcaption><code>.ink-ballpoint</code> notes, arrows</figcaption>
+        </figure>
+        <figure>
+          <div class="op" aria-hidden="true"><span class="overprint a"></span><span class="overprint b"></span></div>
+          <figcaption><code>.overprint</code> / <code>.overprint--on-paper</code></figcaption>
+        </figure>
+        <figure>
+          <div class="fade faded-gradient" style="--fade-from: var(--color-band-2); --fade-to: var(--color-band-4);" aria-hidden="true"></div>
+          <figcaption><code>.faded-gradient</code> neighbouring tones only</figcaption>
+        </figure>
+        <figure>
+          <p class="mis misregister">mandatory</p>
+          <figcaption><code>.misregister</code> offset by <code>--fx-misregister</code></figcaption>
+        </figure>
+      </div>
+      <p class="note"><code>.grain</code> is on <code>&lt;body&gt;</code>; its strength is <code>--fx-grain-opacity</code> per mode.</p>
+    </section>
+
+    <section>
+      <h2>Direction components <span class="hn">seen in context on each page</span></h2>
+      <div class="inv">
+        {DIRECTIONS.map((d) => (
+          <div>
+            <h3><a href={`/${d.slug}/`}>{d.name}</a> <code>src/components/{d.slug}/</code></h3>
+            <ul>
+              {inventory[d.slug].map(([n, r]) => <li><b>{n}</b> &middot; {r}</li>)}
+            </ul>
+          </div>
+        ))}
+      </div>
+      <p class="note">
+        No direction imports from another. Retiring a direction is deleting its
+        folder, its route and its theme file.
+      </p>
+    </section>
+
+    <section>
+      <h2>The constraint, as a number</h2>
+      <p class="note">
+        <code>WORD_BUDGET</code> is <b class="tabular">{WORD_BUDGET}</b>. <code>pnpm check:words</code>
+        counts each direction's built home page and fails over it: more surface is
+        taken in type, space and structure, never in words.
+      </p>
+    </section>
+  </main>
+</BaseThemeLayout>
+
+<script>
+  document.querySelectorAll<HTMLButtonElement>('[data-set-theme]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const t = btn.dataset.setTheme!;
+      (window as any).themeSwitcher?.setTheme(t);
+      document.querySelectorAll('[data-set-theme]').forEach((b) =>
+        b.setAttribute('aria-pressed', String((b as HTMLElement).dataset.setTheme === t)));
+    });
+  });
+  window.addEventListener('theme-change', (e) => {
+    const t = (e as CustomEvent).detail.theme;
+    document.querySelectorAll('[data-set-theme]').forEach((b) =>
+      b.setAttribute('aria-pressed', String((b as HTMLElement).dataset.setTheme === t)));
+  });
+</script>
+
+<style>
+  .ds-chrome { display: flex; flex-wrap: wrap; gap: 0.75rem; justify-content: space-between; align-items: center; padding: 1rem var(--page-gutter, 1.5rem); border-bottom: 1px solid var(--color-editor-red); }
+  .back { font-family: var(--font-data); font-size: 0.85rem; color: var(--color-pen-blue); }
+  .ctl { display: flex; gap: 0.75rem; align-items: center; }
+  .pick { display: flex; border: 1px solid var(--color-border); }
+  .pick button { font-family: var(--font-eyebrow); font-size: 0.7rem; letter-spacing: 0.14em; text-transform: uppercase; padding: 0.5rem 0.75rem; background: transparent; color: var(--color-text-muted); border: 0; cursor: pointer; }
+  .pick button[aria-pressed="true"] { background: var(--color-text); color: var(--color-background); }
+  .ds { max-width: var(--page-measure, 66rem); margin: 0 auto; padding: clamp(2rem, 6vw, 4.5rem) var(--page-gutter, 1.5rem) 5rem; }
+  .eyebrow { font-family: var(--font-eyebrow); font-size: 0.72rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--color-editor-red); margin: 0; }
+  h1 { font-family: var(--font-display); font-style: italic; font-weight: 400; font-size: clamp(2.2rem, 6vw, 3.8rem); margin: 0.5rem 0 0; }
+  .lede, .note { max-width: 60ch; color: var(--color-text-muted); }
+  .lede a { color: var(--color-pen-blue); }
+  section { margin-top: 3.5rem; }
+  h2 { font-family: var(--font-eyebrow); font-size: 0.8rem; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; border-bottom: 1px solid var(--color-rule); padding-bottom: 0.5rem; margin: 0 0 1.25rem; }
+  .hn { text-transform: none; letter-spacing: 0; font-family: var(--font-hand); font-size: 1.15rem; color: var(--color-editor-red); margin-left: 0.5rem; }
+  code { font-family: var(--font-data); font-size: 0.8rem; color: var(--color-text-faint); }
+  .sw { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 15rem), 1fr)); gap: 0.9rem; font-size: 0.85rem; }
+  .sw li { display: flex; gap: 0.65rem; align-items: center; }
+  .chip { flex: none; width: 2.5rem; height: 2.5rem; border: 1px solid var(--color-border); }
+  .type { list-style: none; padding: 0; margin: 0; display: grid; gap: 1.25rem; }
+  .type li { display: grid; gap: 0.25rem; }
+  .spec { font-size: clamp(1.2rem, 3.5vw, 1.8rem); line-height: 1.25; overflow-wrap: anywhere; }
+  .demo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 16rem), 1fr)); gap: 1.5rem; }
+  figure { margin: 0; display: grid; gap: 0.5rem; }
+  figure svg { width: 100%; height: 40px; }
+  figcaption { font-size: 0.8rem; color: var(--color-text-muted); }
+  .op { position: relative; height: 4rem; }
+  .op span { position: absolute; top: 0; width: 4rem; height: 4rem; border-radius: 50%; }
+  .op .a { left: 0; background: var(--color-band-3); }
+  .op .b { left: 2.2rem; background: var(--color-marker-blue); }
+  .fade { height: 4rem; }
+  .mis { margin: 0; font-family: var(--font-display); font-style: italic; font-size: 2.4rem; line-height: 1.1; }
+  .inv { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr)); gap: 2rem; }
+  .inv h3 { font-family: var(--font-display); font-style: italic; font-weight: 400; font-size: 1.5rem; margin: 0 0 0.5rem; }
+  .inv h3 a { color: inherit; }
+  .inv ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.35rem; font-size: 0.85rem; color: var(--color-text-muted); }
+  .inv b { color: var(--color-text); font-weight: 600; }
+</style>

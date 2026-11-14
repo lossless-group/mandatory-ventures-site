@@ -1,0 +1,51 @@
+---
+/* Signatures — the people, signed the way a letter is signed: a hand
+ * signature over a typed name, then the role typed underneath.
+ * Reads: --font-hand, --font-body, --color-text, --color-text-muted,
+ *        --color-border.
+ */
+export interface Person { name: string; role: string }
+export interface Props { people: readonly Person[] }
+const { people } = Astro.props;
+---
+
+<ul class="lb-sig" role="list">
+  {people.map((p) => (
+    <li class="lb-sig__item">
+      <span class="lb-sig__hand ink-ballpoint" aria-hidden="true">{p.name}</span>
+      <span class="lb-sig__name">{p.name}</span>
+      <span class="lb-sig__role">{p.role}</span>
+    </li>
+  ))}
+</ul>
+
+<style>
+  .lb-sig { list-style: none; margin: 1.8rem 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 2rem 3rem; }
+  .lb-sig__item { display: grid; max-width: 22rem; }
+  .lb-sig__hand {
+    font-family: var(--font-hand);
+    font-weight: 500;
+    font-size: 2rem;
+    line-height: 1;
+    color: var(--color-text);
+    transform: rotate(-4deg);
+    transform-origin: left bottom;
+    padding: 0 0.5rem 0.25rem 0.2rem;
+    border-bottom: 1px solid var(--color-border);
+    width: max-content;
+  }
+  .lb-sig__name {
+    margin-top: 0.45rem;
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--color-text);
+  }
+  .lb-sig__role {
+    font-family: var(--font-body);
+    font-size: 0.86rem;
+    line-height: 1.55;
+    color: var(--color-text-muted);
+  }
+</style>

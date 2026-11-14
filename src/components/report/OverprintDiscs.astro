@@ -1,0 +1,37 @@
+---
+/* ============================================================================
+ * OverprintDiscs — Nitsche's "Atoms for Peace": flat transparent inks laid
+ * over each other so they darken where they cross (.overprint). Several
+ * discs, no single owner; the one primitive red is the smallest mark, at the
+ * centre where they all meet. Two thin orbits in the line ink.
+ * ========================================================================== */
+interface Props { label: string }
+const { label } = Astro.props;
+
+const discs = [
+  { cx: 300, cy: 190, r: 118, ink: '--color-band-2' },
+  { cx: 398, cy: 262, r: 118, ink: '--color-band-3' },
+  { cx: 352, cy: 372, r: 118, ink: '--color-marker-blue' },
+  { cx: 238, cy: 360, r: 118, ink: '--color-band-4' },
+  { cx: 208, cy: 254, r: 118, ink: '--color-band-1' },
+];
+---
+
+<svg class="od" viewBox="40 20 520 520" role="img" aria-label={label}>
+  <g class="od-orbit ink-ballpoint">
+    <ellipse cx="300" cy="286" rx="250" ry="98" transform="rotate(-24 300 286)" />
+    <ellipse cx="300" cy="286" rx="236" ry="74" transform="rotate(38 300 286)" />
+  </g>
+  {discs.map((d) => (
+    <circle class="od-disc overprint" cx={d.cx} cy={d.cy} r={d.r} style={`fill: var(${d.ink});`} />
+  ))}
+  <circle class="od-core" cx="300" cy="286" r="13" />
+</svg>
+
+<style>
+  .od { display: block; }
+  .od-disc { opacity: 0.8; }
+  .od-disc:nth-of-type(5) { opacity: 0.55; }
+  .od-orbit { fill: none; stroke: var(--color-text); stroke-width: 1.3; opacity: 0.7; }
+  .od-core { fill: var(--color-editor-red); }
+</style>

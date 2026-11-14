@@ -1,0 +1,29 @@
+---
+/* Trim marks at the four corners of the parent (which must be positioned).
+ * Hairlines that stop short of the trim, as they would on a mechanical. */
+export interface Props { inset?: string }
+const { inset = '0px' } = Astro.props;
+---
+<span class="pu-crop" style={`--inset:${inset}`} aria-hidden="true">
+  <i class="tl"></i><i class="tr"></i><i class="bl"></i><i class="br"></i>
+</span>
+<style>
+  .pu-crop { position: absolute; inset: var(--inset); pointer-events: none; }
+  .pu-crop i { position: absolute; width: 0; height: 0; }
+  .pu-crop i::before, .pu-crop i::after {
+    content: ""; position: absolute; background: var(--color-board-ink);
+  }
+  .pu-crop i::before { width: 20px; height: 1px; top: 0; }
+  .pu-crop i::after  { width: 1px; height: 20px; left: 0; }
+  .tl { top: 0; left: 0; }
+  .tr { top: 0; right: 0; }
+  .bl { bottom: 0; left: 0; }
+  .br { bottom: 0; right: 0; }
+  .tl::before, .bl::before { right: 6px; }
+  .tr::before, .br::before { left: 6px; }
+  .tl::after, .tr::after { bottom: 6px; }
+  .bl::after, .br::after { top: 6px; }
+  @media (max-width: 759px) {
+    .pu-crop { display: none; }
+  }
+</style>

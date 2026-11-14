@@ -1,0 +1,60 @@
+---
+import PrintFilters from '../components/basics/PrintFilters.astro';
+
+export type Direction = 'label' | 'report' | 'paste-up';
+export type Mode = 'light' | 'dark' | 'vibrant';
+
+export interface Props {
+  title?: string;
+  description?: string;
+  theme?: Direction;
+  mode?: Mode;
+}
+
+const {
+  title = 'Mandatory Ventures',
+  description = "Coordinating capital into the world's most important companies. Matching mandates to earned access.",
+  theme = 'label',
+  mode = 'light',
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="en" class={`theme-${theme} theme-transition`} data-theme={theme} data-mode={mode}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    {/* Spike: three directions under review. Stays out of every index. */}
+    <meta name="robots" content="noindex, nofollow" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&family=Libre+Caslon+Text:ital,wght@0,400;0,700;1,400&family=Jost:wght@400;500;600&family=Michroma&family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Special+Elite&family=Cutive+Mono&family=Caveat:wght@500;700&family=Nanum+Pen+Script&display=swap"
+    />
+    <script is:inline>
+      /* Pre-paint MODE only. Mode is a viewer preference and persists across
+       * routes. Direction is the ROUTE and is never restored from storage. */
+      (function () {
+        try {
+          var m = localStorage.getItem('mode');
+          if (m === 'light' || m === 'dark' || m === 'vibrant') {
+            document.documentElement.setAttribute('data-mode', m);
+            document.documentElement.classList.toggle('dark', m !== 'light');
+          } else {
+            var pinned = document.documentElement.getAttribute('data-mode');
+            document.documentElement.classList.toggle('dark', pinned !== 'light');
+          }
+        } catch (e) {}
+      })();
+    </script>
+  </head>
+  <body class="grain">
+    <a class="sr-only" href="#main">Skip to content</a>
+    <PrintFilters />
+    <slot />
+  </body>
+</html>

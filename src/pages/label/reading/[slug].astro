@@ -1,0 +1,225 @@
+---
+/* ============================================================================
+ * DIRECTION — "Label" · Mandatory Reading article template
+ *
+ * The inner page of the label: a compact letterhead (the name, linking home)
+ * and the red rule, then the article typed onto the sheet. Title in the
+ * letterhead's italic serif, the hard facts (date, author) in spaced caps,
+ * the body in typewriter. Prose styles are scoped to .lb-prose under
+ * [data-theme="label"] and read Tier 2 tokens only.
+ * ========================================================================== */
+import BaseThemeLayout from '@layouts/BaseThemeLayout.astro';
+import Letterhead from '@components/label/Letterhead.astro';
+import SmallPrint from '@components/label/SmallPrint.astro';
+import AstroMarkdown from '@components/markdown/AstroMarkdown.astro';
+import Sources from '@components/markdown/Sources.astro';
+import { getReading, parseReading, readingDate, type ReadingEntry } from '@lib/reading';
+import { BRAND } from '@lib/site';
+
+export async function getStaticPaths() {
+  const entries = await getReading();
+  return entries.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
+}
+
+interface Props { entry: ReadingEntry }
+const { entry } = Astro.props;
+const { tree, citations } = await parseReading(entry);
+const { title, lede, date_created, authors } = entry.data;
+---
+
+<BaseThemeLayout title={`${title}: ${BRAND.name}`} description={lede} theme="label" mode="light">
+  <Letterhead compact />
+
+  <main id="main" class="lb-read">
+    <p class="lb-read__kicker">Mandatory Reading</p>
+    <h1 class="lb-read__title">{title}</h1>
+    {lede && <p class="lb-read__lede">{lede}</p>}
+    <p class="lb-read__facts">
+      <span>{readingDate(date_created)}</span>
+      <span>{authors.join(', ')}</span>
+    </p>
+
+    <article class="lb-prose">
+      <AstroMarkdown node={tree} />
+    </article>
+
+    <div class="lb-read__sources">
+      <Sources citations={citations} />
+    </div>
+  </main>
+
+  <div class="lb-read lb-read--foot">
+    <SmallPrint backHref="/label/" backLabel={BRAND.name} />
+  </div>
+</BaseThemeLayout>
+
+<style>
+  .lb-read {
+    display: block;
+    max-width: calc(var(--page-measure) + 4rem);
+    margin: 0 auto;
+    padding: 0 var(--page-gutter);
+  }
+  main.lb-read { padding-top: clamp(2.2rem, 6vw, 3.5rem); }
+
+  .lb-read__kicker {
+    margin: 0;
+    font-family: var(--font-eyebrow);
+    font-size: 0.68rem;
+    font-weight: 500;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+  }
+  .lb-read__title {
+    margin: 0.7rem 0 0;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 400;
+    font-size: clamp(1.9rem, 5vw, 2.6rem);
+    line-height: 1.1;
+    text-transform: lowercase;
+    color: var(--color-text);
+  }
+  .lb-read__lede {
+    margin: 1rem 0 0 clamp(0.85rem, 3.2vw, 2.1rem);
+    max-width: 52ch;
+    font-family: var(--font-body);
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--color-text-muted);
+  }
+  .lb-read__facts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 2.2em;
+    margin: 1.4rem 0 0 clamp(0.85rem, 3.2vw, 2.1rem);
+    font-family: var(--font-eyebrow);
+    font-size: 0.66rem;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--color-text);
+  }
+</style>
+
+<style is:global>
+  /* Prose, typed. Scoped to this direction; Tier 2 tokens only. */
+  [data-theme="label"] .lb-prose {
+    margin: clamp(2.5rem, 6vw, 3.5rem) 0 0;
+    max-width: 62ch;
+    font-family: var(--font-body);
+    font-size: 0.98rem;
+    line-height: 1.75;
+    color: var(--color-text);
+  }
+  [data-theme="label"] .lb-prose > * + * { margin-top: 1.1em; }
+  [data-theme="label"] .lb-prose p { margin: 0 0 1.1em; }
+  [data-theme="label"] .lb-prose h2,
+  [data-theme="label"] .lb-prose h3,
+  [data-theme="label"] .lb-prose h4 {
+    margin: 2.4em 0 0.7em;
+    font-family: var(--font-body);
+    font-weight: 400;
+    font-size: 1rem;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--color-text);
+  }
+  [data-theme="label"] .lb-prose strong { font-weight: 700; }
+  [data-theme="label"] .lb-prose em { font-family: var(--font-display); font-style: italic; font-size: 1.08em; }
+  [data-theme="label"] .lb-prose a {
+    color: var(--color-pen-blue);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.22em;
+  }
+  [data-theme="label"] .lb-prose ul,
+  [data-theme="label"] .lb-prose ol { padding-left: 2.5ch; margin: 0 0 1.1em; }
+  [data-theme="label"] .lb-prose ul { list-style: '–  '; }
+  [data-theme="label"] .lb-prose ol { list-style: decimal; }
+  [data-theme="label"] .lb-prose li { margin: 0.3em 0; }
+  [data-theme="label"] .lb-prose blockquote {
+    margin: 1.6em 0;
+    padding-left: clamp(1rem, 4vw, 2.5rem);
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 1.2rem;
+    line-height: 1.4;
+    color: var(--color-text);
+  }
+  [data-theme="label"] .lb-prose hr {
+    border: 0;
+    border-top: 1px dashed var(--color-border);
+    margin: 2.5em 0;
+  }
+  [data-theme="label"] .lb-prose code {
+    font-family: var(--font-data);
+    font-size: 0.95em;
+    background: var(--color-primary-soft);
+    padding: 0 0.25em;
+  }
+  [data-theme="label"] .lb-prose pre {
+    overflow-x: auto;
+    padding: 1rem;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    font-size: 0.85rem;
+  }
+  [data-theme="label"] .lb-prose table { border-collapse: collapse; width: 100%; font-size: 0.88rem; }
+  [data-theme="label"] .lb-prose th {
+    text-align: left;
+    font-family: var(--font-eyebrow);
+    font-size: 0.66rem;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    padding: 0.4rem 0.8rem 0.4rem 0;
+    border-bottom: 1px solid var(--color-border);
+  }
+  [data-theme="label"] .lb-prose td { padding: 0.35rem 0.8rem 0.35rem 0; font-variant-numeric: tabular-nums; }
+  [data-theme="label"] .lb-prose .citation-marker a { color: var(--color-pen-blue); text-decoration: none; font-size: 0.8em; }
+
+  /* Callouts become a typed memo slip: a quiet ruled box, red-pen header. */
+  [data-theme="label"] .lb-prose .ak-callout {
+    --callout-accent: var(--color-editor-red);
+    grid-template-columns: minmax(0, 1fr);
+    margin: 1.8em 0;
+    padding: 0.9rem 1.1rem;
+    border: 1px solid var(--color-border);
+    border-left: 1px solid var(--color-border);
+    border-radius: var(--radius-control);
+    background: var(--color-surface);
+    font-size: 0.88rem;
+    color: var(--color-text-muted);
+  }
+  [data-theme="label"] .lb-prose .ak-callout-icon { display: none; }
+  [data-theme="label"] .lb-prose .ak-callout-header {
+    font-family: var(--font-hand);
+    font-size: 1.25rem;
+    font-weight: 500;
+    letter-spacing: 0;
+    text-transform: none;
+    color: var(--color-editor-red);
+  }
+  [data-theme="label"] .lb-prose .ak-callout-body p { margin: 0; }
+
+  /* Sources: the citation list, as a typed enclosure list. */
+  [data-theme="label"] .lb-read__sources .sources-section {
+    margin-top: 3rem;
+    padding-top: 1.2rem;
+    border-top: 1px solid var(--color-border);
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    color: var(--color-text-muted);
+  }
+  [data-theme="label"] .lb-read__sources .sources-title {
+    font-family: var(--font-eyebrow);
+    font-size: 0.68rem;
+    font-weight: 500;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--color-text);
+  }
+  [data-theme="label"] .lb-read__sources a { color: var(--color-pen-blue); }
+</style>

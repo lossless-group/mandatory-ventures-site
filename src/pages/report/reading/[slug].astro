@@ -1,0 +1,211 @@
+---
+/* ============================================================================
+ * DIRECTION `report` — Mandatory Reading article.
+ *
+ * Set as an annual report's narrative section: a running head with the
+ * lockup, a Bodoni title over a red hairline, the lede in italic serif, the
+ * body in Caslon on one comfortable measure, figures/code in typewriter,
+ * citations as typewriter footnotes. Bodies go through the shared
+ * @lossless-group/lfm pipeline (src/lib/reading.ts) and AstroMarkdown.
+ * ========================================================================== */
+import BaseThemeLayout from '../../../layouts/BaseThemeLayout.astro';
+import AstroMarkdown from '../../../components/markdown/AstroMarkdown.astro';
+import Sources from '../../../components/markdown/Sources.astro';
+import ModeToggle from '../../../components/ui/ModeToggle.astro';
+import { getReading, parseReading, readingDate, type ReadingEntry } from '../../../lib/reading';
+import { BRAND, DISCLAIMER } from '../../../lib/site';
+
+export async function getStaticPaths() {
+  const entries = await getReading();
+  return entries.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
+}
+
+interface Props { entry: ReadingEntry }
+const { entry } = Astro.props;
+const { tree, citations } = await parseReading(entry);
+const { title, lede, date_created, authors } = entry.data;
+---
+
+<BaseThemeLayout
+  title={`${title}: Mandatory Reading`}
+  description={lede ?? BRAND.hero}
+  theme="report"
+  mode="light"
+>
+  <div class="ar-strip" aria-hidden="true">
+    <span></span><span></span><span></span><span></span>
+  </div>
+  <header class="ar-top">
+    <a class="ar-home" href="/report/">{BRAND.name}</a>
+    <span class="ar-tools">
+      <a class="ar-back" href="/">directions</a>
+      <ModeToggle />
+    </span>
+  </header>
+
+  <main id="main" class="ar">
+    <p class="ar-kicker">Mandatory Reading</p>
+    <h1 class="ar-title">{title}</h1>
+    {lede && <p class="ar-lede">{lede}</p>}
+    <p class="ar-meta">
+      <span>{authors.join(', ')}</span>
+      <time datetime={date_created.toISOString().slice(0, 10)}>{readingDate(date_created)}</time>
+    </p>
+
+    <article class="ar-body report-prose">
+      <AstroMarkdown node={tree} />
+    </article>
+
+    <div class="ar-sources">
+      <Sources citations={citations} />
+    </div>
+
+  </main>
+
+  <footer class="ar-foot">
+    <p>{DISCLAIMER}</p>
+    <a href="/report/">&larr; {BRAND.name}</a>
+  </footer>
+</BaseThemeLayout>
+
+<style>
+  .ar-strip { display: flex; flex-direction: column; }
+  .ar-strip span { height: 0.55rem; border-bottom: 1px solid var(--color-band-1); }
+  .ar-strip span:nth-child(1) { background: var(--color-band-1); }
+  .ar-strip span:nth-child(2) { background: var(--color-band-2); }
+  .ar-strip span:nth-child(3) { background: var(--color-band-3); }
+  .ar-strip span:nth-child(4) { background: var(--color-band-4); }
+
+  .ar-top {
+    max-width: var(--page-measure); margin: 0 auto;
+    padding: 1.1rem var(--page-gutter);
+    display: flex; justify-content: space-between; align-items: center; gap: 1rem;
+    border-bottom: 1px solid var(--color-border);
+  }
+  .ar-home {
+    font-family: var(--font-lockup);
+    font-size: 0.7rem; letter-spacing: 0.34em; text-transform: uppercase;
+    color: var(--color-text); text-decoration: none;
+  }
+  .ar-tools { display: inline-flex; align-items: center; gap: 1rem; }
+  .ar-back {
+    font-family: var(--font-eyebrow); font-size: 0.72rem; letter-spacing: 0.2em;
+    color: var(--color-text-muted);
+  }
+  .ar-back::before { content: "\2190\00a0"; }
+  .ar-top :global(.theme-mode-toggle) { border-radius: 0; width: 2rem; height: 2rem; }
+
+  .ar {
+    max-width: 40rem; margin: 0 auto;
+    padding: clamp(3rem, 8vw, 6rem) var(--page-gutter) 2rem;
+  }
+  .ar-kicker {
+    margin: 0 0 1.2rem;
+    font-family: var(--font-eyebrow); font-weight: 500;
+    font-size: 0.74rem; letter-spacing: 0.28em; text-transform: uppercase;
+    color: var(--color-text-muted);
+  }
+  .ar-title {
+    margin: 0;
+    padding-bottom: 1.1rem;
+    border-bottom: 1.5px solid var(--color-rule);
+    font-family: var(--font-display); font-weight: 500;
+    font-size: clamp(2.4rem, 7vw, 4rem); line-height: 1.02;
+    text-wrap: balance;
+  }
+  .ar-lede {
+    margin: 1.4rem 0 0;
+    font-family: var(--font-body); font-style: italic;
+    font-size: 1.25rem; line-height: 1.45;
+  }
+  .ar-meta {
+    display: flex; flex-wrap: wrap; gap: 0.4rem 1.5rem;
+    margin: 1.4rem 0 0;
+    font-family: var(--font-data); font-size: 0.85rem;
+    color: var(--color-text-muted);
+  }
+
+  .ar-body { margin-top: 2.75rem; }
+  .ar-sources { margin-top: 2rem; }
+
+  .ar-foot {
+    max-width: var(--page-measure); margin: 4rem auto 0;
+    padding: 1.5rem var(--page-gutter) 2.5rem;
+    border-top: 1px solid var(--color-border);
+    display: flex; flex-wrap: wrap; justify-content: space-between; gap: 1rem;
+    font-family: var(--font-eyebrow); font-size: 0.72rem;
+    letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--color-text-muted);
+  }
+  .ar-foot p { margin: 0; }
+  .ar-foot a { color: var(--color-primary); }
+
+  /* ---- Prose: the report's narrative section ------------------------- */
+  :global([data-theme="report"] .report-prose) {
+    font-family: var(--font-body);
+    font-size: 1.08rem; line-height: 1.7;
+    color: var(--color-text);
+    hyphens: auto;
+  }
+  :global([data-theme="report"] .report-prose p) { margin: 0 0 1.1em; }
+  :global([data-theme="report"] .report-prose h2),
+  :global([data-theme="report"] .report-prose h3) {
+    font-family: var(--font-display); font-weight: 500;
+    line-height: 1.15; margin: 2.2em 0 0.6em;
+  }
+  :global([data-theme="report"] .report-prose h2) { font-size: 1.8rem; }
+  :global([data-theme="report"] .report-prose h3) { font-size: 1.35rem; }
+  :global([data-theme="report"] .report-prose h4) {
+    font-family: var(--font-eyebrow); font-size: 0.8rem; font-weight: 500;
+    letter-spacing: 0.22em; text-transform: uppercase; margin: 2em 0 0.6em;
+  }
+  :global([data-theme="report"] .report-prose a) { color: var(--color-primary); text-underline-offset: 0.18em; text-decoration-thickness: 1px; }
+  :global([data-theme="report"] .report-prose strong) { font-weight: 700; }
+  :global([data-theme="report"] .report-prose em) { font-style: italic; }
+  :global([data-theme="report"] .report-prose ul),
+  :global([data-theme="report"] .report-prose ol) { margin: 0 0 1.1em; padding-left: 1.4em; }
+  :global([data-theme="report"] .report-prose ul) { list-style: disc; }
+  :global([data-theme="report"] .report-prose ol) { list-style: decimal; }
+  :global([data-theme="report"] .report-prose li) { margin: 0.3em 0; }
+  :global([data-theme="report"] .report-prose blockquote) {
+    margin: 1.6em 0; padding: 0 0 0 1.2em;
+    border-left: 1.5px solid var(--color-rule);
+    font-style: italic; color: var(--color-text-muted);
+  }
+  :global([data-theme="report"] .report-prose code) { font-family: var(--font-data); font-size: 0.92em; }
+  :global([data-theme="report"] .report-prose hr) { border: 0; border-top: 1px solid var(--color-border); margin: 2.4em 0; }
+  :global([data-theme="report"] .report-prose table) {
+    width: 100%; border-collapse: collapse; margin: 1.6em 0;
+    font-family: var(--font-data); font-size: 0.88rem;
+    border: 1.5px solid var(--color-rule);
+  }
+  :global([data-theme="report"] .report-prose th),
+  :global([data-theme="report"] .report-prose td) { padding: 0.5em 0.7em; text-align: left; border: 1px solid var(--color-rule); }
+  :global([data-theme="report"] .report-prose .citation-marker a) {
+    font-family: var(--font-data); font-size: 0.75em; color: var(--color-editor-red); text-decoration: none;
+  }
+
+  /* Callouts: an editor's slip clipped to the page. Tier 2 tokens only. */
+  :global([data-theme="report"] .report-prose .ak-callout) {
+    --callout-accent: var(--color-editor-red);
+    background: var(--color-surface);
+    border: 0; border-top: 1.5px solid var(--color-rule);
+    border-radius: 0;
+    margin: 0 0 2.2em;
+    font-family: var(--font-data); font-size: 0.88rem; line-height: 1.5;
+    color: var(--color-text-muted);
+  }
+
+  /* Sources: typewriter footnotes under a hairline. */
+  .ar-sources :global(.sources-section) { border-top: 1px solid var(--color-border); padding-top: 1.5rem; }
+  .ar-sources :global(.sources-title) {
+    font-family: var(--font-eyebrow); font-size: 0.74rem; font-weight: 500;
+    letter-spacing: 0.26em; text-transform: uppercase; color: var(--color-text-muted);
+  }
+  .ar-sources :global(.sources-list) { font-family: var(--font-data); font-size: 0.85rem; }
+  .ar-sources :global(.source-title) { color: var(--color-primary); }
+  .ar-sources :global(.source-index),
+  .ar-sources :global(.source-publication),
+  .ar-sources :global(.source-date),
+  .ar-sources :global(.source-raw) { color: var(--color-text-muted); }
+</style>

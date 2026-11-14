@@ -1,0 +1,194 @@
+---
+/* Mandatory Reading, Paste-Up direction: the article is a typed galley proof
+ * pasted onto the board. Title in hand-set Bodoni with the red plate off
+ * register; body typed; citations as a ruled sources list at the foot. */
+import BaseThemeLayout from '../../../layouts/BaseThemeLayout.astro';
+import ModeToggle from '../../../components/ui/ModeToggle.astro';
+import AstroMarkdown from '../../../components/markdown/AstroMarkdown.astro';
+import Sources from '../../../components/markdown/Sources.astro';
+import Slip from '../../../components/paste-up/Slip.astro';
+import BluePencil from '../../../components/paste-up/BluePencil.astro';
+import RegMark from '../../../components/paste-up/RegMark.astro';
+import CropMarks from '../../../components/paste-up/CropMarks.astro';
+import { getReading, parseReading, readingDate, type ReadingEntry } from '../../../lib/reading';
+import { BRAND, DISCLAIMER } from '../../../lib/site';
+
+export async function getStaticPaths() {
+  const entries = await getReading();
+  return entries.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
+}
+
+const { entry } = Astro.props as { entry: ReadingEntry };
+const { tree, citations } = await parseReading(entry);
+const { title, lede, date_created, authors } = entry.data;
+---
+
+<BaseThemeLayout title={`${title} · Mandatory Reading`} description={lede} theme="paste-up" mode="light">
+  <div class="board">
+    <header class="jobbar">
+      <a class="home" href="/paste-up">← {BRAND.name}</a>
+      <ModeToggle />
+    </header>
+
+    <main id="main">
+      <div class="galley-wrap">
+        <CropMarks />
+        <RegMark class="reg reg-l" />
+        <RegMark class="reg reg-r" />
+        <BluePencil class="g-note" rotate={-2}>galley 1 · Courier 11/16</BluePencil>
+        <Slip as="article" rotate={-0.5} tape="both" class="galley" labelledby="article-title">
+          <p class="eyebrow">Mandatory Reading</p>
+          <h1 id="article-title">{title}</h1>
+          {lede && <p class="lede">{lede}</p>}
+          <p class="byline">{authors.join(', ')} · <time datetime={date_created.toISOString()}>{readingDate(date_created)}</time></p>
+          <div class="prose">
+            <AstroMarkdown node={tree} />
+          </div>
+          <div class="sources">
+            <Sources citations={citations} />
+          </div>
+        </Slip>
+      </div>
+    </main>
+
+    <footer class="foot">
+      <hr class="red-rule" />
+      <p class="disclaimer">{DISCLAIMER}</p>
+    </footer>
+  </div>
+</BaseThemeLayout>
+
+<style>
+  .board {
+    min-height: 100vh;
+    overflow-x: clip;
+    background-color: var(--color-background);
+    background-image: var(--board-image);
+    background-size: var(--board-image-size);
+    color: var(--color-board-ink);
+    padding: 0 var(--page-gutter) 3rem;
+  }
+  .jobbar, main, .foot { max-width: 52rem; margin-inline: auto; }
+  .jobbar { display: flex; justify-content: space-between; align-items: center; padding: 1.1rem 0; }
+  .home {
+    font-family: var(--font-typed);
+    color: var(--color-board-ink);
+    text-decoration-color: var(--color-board-blue);
+    text-underline-offset: 0.25em;
+  }
+  .jobbar :global(.theme-mode-toggle) { color: var(--color-board-ink); border-color: var(--color-board-ink-muted); border-radius: 0; }
+
+  .galley-wrap { position: relative; margin: 2.5rem 0 4rem; padding: 2.4rem 0 0; }
+  .galley-wrap :global(.reg) { position: absolute; top: calc(50% - 13px); }
+  .galley-wrap :global(.reg-l) { left: -40px; }
+  .galley-wrap :global(.reg-r) { right: -40px; }
+  @media (max-width: 899px) { .galley-wrap :global(.reg) { display: none; } }
+  .galley-wrap :global(.g-note) { position: absolute; top: 0; right: 0.5rem; }
+
+  .eyebrow {
+    margin: 0 0 0.8rem;
+    font-family: var(--font-eyebrow);
+    font-size: 0.74rem;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+  }
+  h1 {
+    margin: 0;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(2.2rem, 1.4rem + 3.6vw, 3.8rem);
+    line-height: 1;
+    letter-spacing: -0.01em;
+    text-shadow: var(--fx-misregister) calc(var(--fx-misregister) * -0.6) 0
+      color-mix(in oklab, var(--color-editor-red) 70%, transparent);
+  }
+  .lede {
+    margin: 1rem 0 0;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 1.25rem;
+    line-height: 1.35;
+  }
+  .byline {
+    margin: 1.2rem 0 0;
+    padding-bottom: 1.2rem;
+    border-bottom: 1px solid var(--color-rule);
+    font-family: var(--font-eyebrow);
+    font-size: 0.72rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+  }
+
+  /* ---- the typed galley ---- */
+  .prose {
+    margin-top: 1.6rem;
+    font-family: var(--font-body);
+    font-size: 1.02rem;
+    line-height: 1.65;
+    color: var(--color-text);
+  }
+  .prose :global(p) { margin: 0 0 1.1rem; }
+  .prose :global(strong) { font-weight: 700; }
+  .prose :global(em) { font-family: var(--font-display); font-size: 1.08em; }
+  .prose :global(a) { color: var(--color-pen-blue); text-underline-offset: 0.2em; }
+  .prose :global(h2), .prose :global(h3) {
+    font-family: var(--font-display);
+    font-weight: 700;
+    line-height: 1.1;
+    margin: 2rem 0 0.8rem;
+  }
+  .prose :global(h2) { font-size: 1.7rem; }
+  .prose :global(h3) { font-size: 1.3rem; }
+  .prose :global(ul), .prose :global(ol) { padding-left: 1.4rem; margin: 0 0 1.1rem; }
+  .prose :global(ul) { list-style: disc; }
+  .prose :global(ol) { list-style: decimal; }
+  .prose :global(blockquote) {
+    margin: 1.4rem 0;
+    padding-left: 1rem;
+    border-left: 2px solid var(--color-editor-red);
+    font-family: var(--font-display);
+    font-style: italic;
+  }
+  .prose :global(code) { font-family: var(--font-data); }
+  /* LFM callouts: an editor's slip clipped to the galley, in red pen */
+  .prose :global(.ak-callout) {
+    --callout-accent: var(--color-editor-red);
+    margin: 0 0 1.6rem;
+    padding: 0.9rem 1.1rem;
+    border: 1.5px dashed var(--color-editor-red);
+    border-radius: 0;
+    background: var(--color-surface-raised);
+    color: var(--color-text);
+    transform: rotate(-0.6deg);
+  }
+  .prose :global(.ak-callout *) { color: inherit; }
+  .prose :global(.ak-callout-header) {
+    font-family: var(--font-hand);
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: var(--color-editor-red);
+  }
+  .prose :global(.citation-marker a) { color: var(--color-editor-red); text-decoration: none; font-family: var(--font-data); }
+
+  /* Shared Sources.astro reads unprefixed vars; alias them to this theme. */
+  .sources {
+    --foreground: var(--color-text);
+    --primary: var(--color-pen-blue);
+    --muted-foreground: var(--color-text-muted);
+    --border: var(--color-rule);
+    font-family: var(--font-data);
+  }
+  .sources :global(.sources-title) { font-family: var(--font-eyebrow); letter-spacing: 0.2em; text-transform: uppercase; font-size: 0.8rem; }
+
+  .foot { padding-top: 0.5rem; }
+  .red-rule { border: 0; height: 1px; background: var(--color-rule); margin: 0 0 1.2rem; }
+  .disclaimer {
+    margin: 0;
+    font-family: var(--font-eyebrow);
+    font-size: 0.72rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+</style>

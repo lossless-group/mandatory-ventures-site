@@ -1,0 +1,176 @@
+---
+/* Stakeholder-facing brand kit. The source of every decision here is
+ * design/moodboard/decisions.md (2026-11-12). This page is the documented
+ * exception that shows raw Tier 1 named tokens, because naming the palette
+ * is its job. */
+import BaseThemeLayout from '../../layouts/BaseThemeLayout.astro';
+import ModeToggle from '../../components/ui/ModeToggle.astro';
+import { BRAND, DEFINITION } from '../../lib/site';
+
+const inks = [
+  { t: '--color__typewriter-black', n: 'Typewriter black', r: 'Body, headings, tables, chart frames. The primary content. Never pure black.' },
+  { t: '--color__pen-black', n: 'Pen black', r: 'Hand-drawn lines, signatures, simple diagrams.' },
+  { t: '--color__pen-blue', n: 'Pen blue', r: "Annotations, links, filled-in fields: the author's own hand. Provisional." },
+  { t: '--color__marker-blue', n: 'Marker blue', r: 'Chart data, highlights. Provisional.' },
+  { t: '--color__fusion-red', n: "Editor's red", r: 'Emphasis, corrections, author comments, editor notes. The humor channel. Scarce.' },
+];
+const paper = [
+  { t: '--color__atomic-cream', n: 'Atomic cream', r: 'Nitsche fusion and Convair posters' },
+  { t: '--color__paper-foxed', n: 'Foxed paper', r: 'Off-white after sixty years on a shelf' },
+  { t: '--color__paper-bone', n: 'Bone', r: 'Letterhead stock' },
+  { t: '--color__atomic-sage', n: 'Atomic sage', r: 'Atoms for Peace ground' },
+  { t: '--color__carbon', n: 'Carbon', r: 'Dark stock for dark and vibrant modes' },
+];
+const field = [
+  { t: '--color__deep-slate', n: 'Deep slate' },
+  { t: '--color__mauve-grey', n: 'Mauve grey' },
+  { t: '--color__sage-band', n: 'Sage band' },
+  { t: '--color__teal-band', n: 'Teal band' },
+  { t: '--color__band-ink', n: 'Band ink' },
+  { t: '--color__aged-gold', n: 'Aged gold' },
+];
+const voices = [
+  { t: '--font__caslon', n: 'Lowercase italic serif', s: 'mandatory ventures', i: true, r: 'The name and the one-line promise. Quiet, literate, a little wry.' },
+  { t: '--font__jost', n: 'Spaced geometric caps', s: 'MANDATORY.VENTURES · X · LINKEDIN', caps: true, r: 'Hard facts on one line.' },
+  { t: '--font__courier-prime', n: 'Typewriter', s: 'ATTN: LARGE-SCALE CAPITAL', r: 'The typed, personal content.' },
+  { t: '--font__bodoni', n: 'High-contrast serif', s: 'Matching mandates to earned access.', r: 'Headings, from the narrative.' },
+  { t: '--font__michroma', n: 'Extended lockup caps', s: 'MANDATORY VENTURES', caps: true, r: 'The Nitsche name-along-the-bottom lockup.' },
+  { t: '--font__caveat', n: 'Pen hand', s: 'see curve. note where the pretending starts.', r: 'Margin notes in pen or red pen.' },
+];
+---
+
+<BaseThemeLayout
+  title="Brand kit · Mandatory Ventures"
+  description="Paper, inks, type voices and the rules behind them, in all three modes."
+  theme="label"
+  mode="light"
+>
+  <header class="bk-chrome">
+    <a class="back" href="/">&larr; directions</a>
+    <ModeToggle />
+  </header>
+
+  <main class="bk" id="main">
+    <p class="eyebrow">Brand kit</p>
+    <h1>{BRAND.name.toLowerCase()}</h1>
+    <p class="def"><b>{DEFINITION.word}</b> <i>{DEFINITION.part}</i> {DEFINITION.sense}</p>
+    <p class="lede">
+      A typed document that someone has written on. Black and blue carry what
+      Mandatory says; red is an editor reacting to it. Every rule below comes
+      from the mood board's decision log.
+    </p>
+
+    <section>
+      <h2>North star</h2>
+      <p class="note">
+        Goldsholl &amp; Associates' parcel label for Paul Theobald and Company: three
+        type voices, one small witty mark, one red hairline rule, typed content,
+        deadpan official small print, lots of paper. When other choices pull in
+        different directions, this label wins.
+      </p>
+    </section>
+
+    <section>
+      <h2>Inks <span class="hn">each one has a job</span></h2>
+      <ul class="sw">
+        {inks.map((s) => (
+          <li><span class="chip" style={`background:var(${s.t})`}></span><span><b>{s.n}</b> <code>{s.t}</code><br />{s.r}</span></li>
+        ))}
+      </ul>
+    </section>
+
+    <section>
+      <h2>Paper</h2>
+      <ul class="sw">
+        {paper.map((s) => (
+          <li><span class="chip" style={`background:var(${s.t})`}></span><span><b>{s.n}</b> <code>{s.t}</code><br />{s.r}</span></li>
+        ))}
+      </ul>
+    </section>
+
+    <section>
+      <h2>The Nitsche field <span class="hn">illustration, pattern and grounds, never text</span></h2>
+      <div class="bands" aria-hidden="true">
+        {field.map((s) => <span style={`background:var(${s.t})`}></span>)}
+      </div>
+      <ul class="sw compact">
+        {field.map((s) => (
+          <li><span class="chip" style={`background:var(${s.t})`}></span><span><b>{s.n}</b> <code>{s.t}</code></span></li>
+        ))}
+      </ul>
+      <p class="note">Muted field, one primitive red. Flat inks; where shapes cross they overprint.</p>
+    </section>
+
+    <section>
+      <h2>Type voices</h2>
+      <ul class="voices">
+        {voices.map((v) => (
+          <li>
+            <span class="specimen" style={`font-family:var(${v.t});${v.i ? 'font-style:italic;' : ''}${v.caps ? 'letter-spacing:0.18em;' : ''}`}>{v.s}</span>
+            <span class="vm"><b>{v.n}</b> <code>{v.t}</code> &middot; {v.r}</span>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <section>
+      <h2>Lines <span class="hn">a little texture, never a gimmick</span></h2>
+      <svg class="lines" viewBox="0 0 600 110" role="img" aria-label="Three line textures: typewriter, felt-tip marker, ballpoint">
+        <line class="ink-typewriter" x1="10" y1="20" x2="590" y2="20" stroke="var(--color-text)" stroke-width="1.5" />
+        <path class="ink-marker" d="M10 58 C 160 50, 380 66, 590 54" fill="none" stroke="var(--color-marker-blue)" stroke-width="5" stroke-linecap="round" />
+        <path class="ink-ballpoint" d="M10 96 C 200 90, 400 100, 590 92" fill="none" stroke="var(--color-pen-blue)" stroke-width="1.2" stroke-linecap="round" />
+      </svg>
+      <p class="note">Typewriter for rules and frames, felt-tip for data and emphasis, ballpoint for notes and arrows.</p>
+    </section>
+
+    <section>
+      <h2>Gradients and print flair</h2>
+      <div class="fade faded-gradient" style="--fade-from: var(--color-band-1); --fade-to: var(--color-band-3);" aria-hidden="true"></div>
+      <p class="note">
+        Gradients are soft, faded and grainy, between neighbouring muted tones only.
+        Bigger moments must look fought onto paper: limited inks, misregistration,
+        halftones, paste-up, crop marks. Nothing only a screen can do.
+      </p>
+      <p class="misreg misregister">because it&rsquo;s mandatory.</p>
+    </section>
+
+    <section>
+      <h2>Illustration</h2>
+      <p class="note">
+        <b>Default:</b> a flat, single-ink silhouette on toned paper (Central Airlines,
+        1966). <b>Punchline:</b> a Gilliam-style cut-out collage, kept for jokes.
+        <b>Tables:</b> a quiet ledger, plus one red ruled box for the headline
+        numbers (Northwest Airlines, 1960). <b>Charts:</b> a typewriter-set frame
+        with felt-tip marker data on top.
+      </p>
+    </section>
+  </main>
+</BaseThemeLayout>
+
+<style>
+  .bk-chrome { display: flex; justify-content: space-between; align-items: center; padding: 1rem var(--page-gutter, 1.5rem); border-bottom: 1px solid var(--color-editor-red); }
+  .back { font-family: var(--font-data); font-size: 0.85rem; color: var(--color-pen-blue); }
+  .bk { max-width: var(--page-measure, 66rem); margin: 0 auto; padding: clamp(2rem, 6vw, 4.5rem) var(--page-gutter, 1.5rem) 5rem; }
+  .eyebrow { font-family: var(--font-eyebrow); font-size: 0.72rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--color-editor-red); margin: 0; }
+  h1 { font-family: var(--font-display); font-style: italic; font-weight: 400; font-size: clamp(2.4rem, 7vw, 4.5rem); margin: 0.5rem 0 0; }
+  .def { font-family: var(--font-data); margin: 0.5rem 0 0; }
+  .lede { max-width: 58ch; color: var(--color-text-muted); }
+  section { margin-top: 3.5rem; }
+  h2 { font-family: var(--font-eyebrow); font-size: 0.8rem; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; border-bottom: 1px solid var(--color-rule); padding-bottom: 0.5rem; margin: 0 0 1.25rem; }
+  .hn { text-transform: none; letter-spacing: 0; font-family: var(--font-hand); font-size: 1.2rem; color: var(--color-editor-red); margin-left: 0.5rem; }
+  .note { max-width: 62ch; color: var(--color-text-muted); }
+  .sw { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 19rem), 1fr)); gap: 1rem; font-size: 0.9rem; }
+  .sw li { display: flex; gap: 0.75rem; align-items: flex-start; }
+  .chip { flex: none; width: 2.75rem; height: 2.75rem; border: 1px solid var(--color-border); }
+  .sw.compact .chip { width: 1.75rem; height: 1.75rem; }
+  code { font-family: var(--font-data); font-size: 0.78rem; color: var(--color-text-faint); }
+  .bands { display: grid; height: 7rem; margin-bottom: 1rem; }
+  .bands span { border-bottom: 1px solid var(--color-text); }
+  .voices { list-style: none; padding: 0; margin: 0; display: grid; gap: 1.5rem; }
+  .voices li { display: grid; gap: 0.35rem; }
+  .specimen { font-size: clamp(1.4rem, 4vw, 2.1rem); line-height: 1.2; overflow-wrap: anywhere; }
+  .vm { font-size: 0.85rem; color: var(--color-text-muted); }
+  .lines { width: 100%; max-width: 600px; display: block; }
+  .fade { height: 6rem; margin-bottom: 1rem; }
+  .misreg { font-family: var(--font-display); font-style: italic; font-size: clamp(2rem, 6vw, 3.5rem); margin: 1rem 0 0; }
+</style>

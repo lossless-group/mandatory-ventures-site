@@ -1,0 +1,25 @@
+---
+/* RunningHead — the thin line at the top of each spread: section numeral in
+ * extended caps, a typewriter folio at the far end, one hairline under it. */
+interface Props { numeral: string; folio: number; label?: string }
+const { numeral, folio, label } = Astro.props;
+---
+
+<div class="rh" aria-hidden="true">
+  <span class="rh-no">{numeral}</span>
+  {label && <span class="rh-label">{label}</span>}
+  <span class="rh-folio">{folio}</span>
+</div>
+
+<style>
+  .rh {
+    display: flex; align-items: baseline; gap: 1.25rem;
+    padding-bottom: 0.55rem;
+    border-bottom: 1px solid var(--color-border);
+    font-family: var(--font-lockup);
+    font-size: 0.66rem; letter-spacing: 0.3em; text-transform: uppercase;
+    color: var(--color-text-muted);
+  }
+  .rh-label { flex: 1 1 auto; }
+  .rh-folio { margin-left: auto; font-family: var(--font-data); letter-spacing: 0; font-size: 0.85rem; }
+</style>

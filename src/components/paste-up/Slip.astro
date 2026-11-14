@@ -1,0 +1,67 @@
+---
+/* A typed slip of copy, trimmed by hand and pasted onto the board.
+ * Paper edge, paper-on-paper shadow, a small rotation that calms down to
+ * almost nothing on a phone so reading never suffers. Optional tape. */
+export interface Props {
+  as?: 'div' | 'section' | 'article' | 'aside' | 'header' | 'footer' | 'figure' | 'nav';
+  rotate?: number;
+  tape?: 'left' | 'right' | 'both' | 'none';
+  lifted?: boolean;
+  class?: string;
+  id?: string;
+  labelledby?: string;
+  label?: string;
+}
+const {
+  as: Tag = 'div',
+  rotate = 0,
+  tape = 'none',
+  lifted = false,
+  class: cls = '',
+  id,
+  labelledby,
+  label,
+} = Astro.props;
+---
+
+<Tag
+  class:list={['pu-slip', lifted && 'is-lifted', cls]}
+  style={`--r:${rotate}deg`}
+  id={id}
+  aria-labelledby={labelledby}
+  aria-label={label}
+>
+  {(tape === 'left' || tape === 'both') && <span class="pu-tape pu-tape--l" aria-hidden="true"></span>}
+  {(tape === 'right' || tape === 'both') && <span class="pu-tape pu-tape--r" aria-hidden="true"></span>}
+  <slot />
+</Tag>
+
+<style>
+  .pu-slip {
+    position: relative;
+    background: var(--color-surface);
+    color: var(--color-text);
+    border: 1px solid var(--color-slip-edge);
+    box-shadow: var(--slip-shadow);
+    padding: clamp(1rem, 2.4vw, 1.6rem) clamp(1rem, 3vw, 1.9rem);
+    transform: rotate(calc(var(--r) * 0.3));
+    /* a hand-trimmed edge: not quite square */
+    border-radius: 1px 3px 1px 2px / 2px 1px 3px 1px;
+  }
+  .pu-slip.is-lifted { box-shadow: var(--slip-shadow-lifted); }
+  @media (min-width: 760px) {
+    .pu-slip { transform: rotate(var(--r)); }
+  }
+  .pu-tape {
+    position: absolute;
+    top: -0.55rem;
+    width: 4.2rem;
+    height: 1.3rem;
+    background: var(--color-tape);
+    border-left: 1px dashed color-mix(in oklab, var(--color-text) 12%, transparent);
+    border-right: 1px dashed color-mix(in oklab, var(--color-text) 12%, transparent);
+    pointer-events: none;
+  }
+  .pu-tape--l { left: 1.2rem; transform: rotate(-6deg); }
+  .pu-tape--r { right: 1.2rem; transform: rotate(5deg); }
+</style>

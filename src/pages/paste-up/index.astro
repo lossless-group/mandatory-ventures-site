@@ -1,0 +1,415 @@
+---
+/* ============================================================================
+ * DIRECTION — "Paste-Up"
+ *
+ * The home page as the mechanical for a printed piece, caught mid-production:
+ * typed slips pasted onto a board, a Letraset headline printed in two plates
+ * that missed, coarse dot screens, crop and registration marks, blue-pencil
+ * instructions to the printer, and the editor's red pen. One Gilliam cut-out
+ * (the hand in the headline). Every word of copy comes from src/lib/site.ts
+ * or src/content/; the only words written here are short production
+ * furniture (job ticket, printer's marks), which count toward WORD_BUDGET.
+ * ========================================================================== */
+import { getCollection } from 'astro:content';
+import BaseThemeLayout from '../../layouts/BaseThemeLayout.astro';
+import ModeToggle from '../../components/ui/ModeToggle.astro';
+import Slip from '../../components/paste-up/Slip.astro';
+import Headline from '../../components/paste-up/Headline.astro';
+import Curve from '../../components/paste-up/Curve.astro';
+import RedPen from '../../components/paste-up/RedPen.astro';
+import BluePencil from '../../components/paste-up/BluePencil.astro';
+import RegMark from '../../components/paste-up/RegMark.astro';
+import CropMarks from '../../components/paste-up/CropMarks.astro';
+import FpoBox from '../../components/paste-up/FpoBox.astro';
+import ColorBar from '../../components/paste-up/ColorBar.astro';
+import SectionCopy from '../../components/paste-up/SectionCopy.astro';
+import Overprint from '../../components/paste-up/Overprint.astro';
+import { BRAND, DEFINITION, PEOPLE, CONNECT, DISCLAIMER } from '../../lib/site';
+import { getReading } from '../../lib/reading';
+
+const sections = (await getCollection('sections')).sort((a, b) => a.data.order - b.data.order);
+const section = (id: string) => sections.find((s) => s.data.slug_id === id)!;
+const scaleup = section('scaleup');
+const trust = section('trust');
+const why = section('why');
+const coalition = section('coalition');
+
+const voices = (await getCollection('voices')).sort((a, b) => a.data.order - b.data.order);
+const para = (body?: string) => (body ?? '').trim().replace(/\s+/g, ' ');
+
+const reading = (await getReading())[0];
+---
+
+<BaseThemeLayout title="Mandatory Ventures · Paste-Up" theme="paste-up" mode="light">
+  <div class="board">
+    <header class="jobbar">
+      <p class="lockup">{BRAND.name}</p>
+      <BluePencil class="job" rotate={-1}>job MV-001 · 2 col + 1</BluePencil>
+      <div class="chrome">
+        <a class="back" href="/">← directions</a>
+        <ModeToggle />
+      </div>
+    </header>
+
+    <main id="main">
+      <!-- ==================== HERO: the mechanical ==================== -->
+      <section class="hero" aria-labelledby="hero-h">
+        <CropMarks />
+        <RegMark class="reg reg-top" />
+        <RegMark class="reg reg-left" />
+        <RegMark class="reg reg-right" />
+        <span class="disc overprint" aria-hidden="true"></span>
+        <BluePencil class="note-set" rotate={-2}>set Bodoni 96 pt · kern by hand</BluePencil>
+        <div class="hl-wrap"><Headline text={BRAND.hero} id="hero-h" /></div>
+        <div class="hero-slips">
+          <Slip rotate={-1.2} tape="left" class="subhead-slip">
+            <p class="subhead">{BRAND.subhead}</p>
+          </Slip>
+          <Slip rotate={2.2} class="def-slip">
+            <p class="def">
+              <b>{DEFINITION.word}</b> <i>{DEFINITION.part}</i> {DEFINITION.sense}
+            </p>
+          </Slip>
+        </div>
+      </section>
+
+      <!-- ==================== 1 · startup to scaleup ==================== -->
+      <section class="row scaleup" aria-labelledby="h-scaleup">
+        <Slip rotate={-0.8} tape="right" class="copy-slip">
+          <SectionCopy entry={scaleup} headingId="h-scaleup" />
+        </Slip>
+        <div class="chart-col">
+          <Slip rotate={1} class="chart-slip">
+            <Curve />
+          </Slip>
+          {scaleup.data.editor_note && (
+            <RedPen on="board" arrow="up" rotate={-4} class="chart-note">{scaleup.data.editor_note}</RedPen>
+          )}
+        </div>
+      </section>
+
+      <!-- ==================== the two voices ==================== -->
+      <section class="row voices" aria-label="The two voices">
+        {voices.map((v, i) => (
+          <Slip rotate={i === 0 ? -1.4 : 1.1} tape={i === 0 ? 'left' : 'right'} class:list={['voice', `voice-${i + 1}`]} as="article" labelledby={`h-voice-${i + 1}`}>
+            <h2 class="voice-h" id={`h-voice-${i + 1}`}>{v.data.audience}</h2>
+            <p class="who">{v.data.who}</p>
+            <p class="voice-body">{para(v.body)}</p>
+            <p class="takeaway">{v.data.takeaway}</p>
+          </Slip>
+        ))}
+      </section>
+
+      <!-- ==================== people and trust ==================== -->
+      <section class="row trust" aria-labelledby="h-trust">
+        <Slip rotate={0.7} class="copy-slip">
+          <SectionCopy entry={trust} headingId="h-trust" />
+          <span class="ledger" aria-hidden="true"><i></i><i></i><i></i></span>
+        </Slip>
+        <div class="people-col">
+          {PEOPLE.map((p) => (
+            <Slip rotate={-2} tape="both" class="person" as="figure">
+              <FpoBox class="person-fpo" />
+              <figcaption>
+                <span class="person-name">{p.name}</span>
+                <span class="person-role">{p.role}</span>
+              </figcaption>
+            </Slip>
+          ))}
+          {trust.data.editor_note && (
+            <RedPen on="board" arrow="left" rotate={-5} class="trust-note">{trust.data.editor_note}</RedPen>
+          )}
+        </div>
+      </section>
+
+      <!-- ==================== why this one ==================== -->
+      <section class="row why" aria-labelledby="h-why">
+        <Slip rotate={-1.1} tape="left" class="copy-slip">
+          <SectionCopy entry={why} headingId="h-why" circle="SPV Bros" />
+        </Slip>
+        {why.data.editor_note && (
+          <RedPen on="board" arrow="left" rotate={-3} class="why-note">{why.data.editor_note}</RedPen>
+        )}
+      </section>
+
+      <!-- ==================== a coalition, not a company ==================== -->
+      <section class="row coalition" aria-labelledby="h-coalition">
+        <div class="coalition-art"><Overprint /><BluePencil rotate={3} class="stat">stat at 80%</BluePencil></div>
+        <Slip rotate={1.3} tape="right" class="copy-slip">
+          <SectionCopy entry={coalition} headingId="h-coalition" />
+        </Slip>
+      </section>
+
+      <!-- ==================== reading + connect ==================== -->
+      <div class="row tail">
+        {reading && (
+          <Slip rotate={-1.6} tape="left" class="reading" as="aside" label="Mandatory Reading">
+            <p class="reading-eyebrow">Mandatory Reading</p>
+            <a class="reading-link" href={`/paste-up/reading/${reading.id}`}>{reading.data.title} →</a>
+          </Slip>
+        )}
+        <Slip rotate={1.8} class="connect" as="nav" label="Connect">
+          <ul>
+            {CONNECT.map((c) => (
+              <li><a href={c.href} rel="me noopener" target="_blank"><span class="c-label">{c.label}</span> {c.handle}</a></li>
+            ))}
+          </ul>
+        </Slip>
+      </div>
+    </main>
+
+    <footer class="foot">
+      <hr class="red-rule" />
+      <p class="signoff">{BRAND.sign_off}</p>
+      <p class="disclaimer"><span class="arrow" aria-hidden="true"></span>{DISCLAIMER}</p>
+      <div class="press" aria-hidden="true">
+        <ColorBar />
+        <RegMark size={22} />
+      </div>
+    </footer>
+  </div>
+</BaseThemeLayout>
+
+<style>
+  .board {
+    min-height: 100vh;
+    overflow-x: clip;
+    background-color: var(--color-background);
+    background-image: var(--board-image);
+    background-size: var(--board-image-size);
+    color: var(--color-board-ink);
+    padding: 0 var(--page-gutter) 3rem;
+  }
+  main, .jobbar, .foot { max-width: 1180px; margin-inline: auto; }
+
+  /* ---------- job bar ---------- */
+  .jobbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem 1.5rem;
+    padding: 1.1rem 0 0.9rem;
+  }
+  .lockup {
+    margin: 0;
+    font-family: var(--font-lockup);
+    font-size: 0.72rem;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--color-board-ink);
+  }
+  .chrome { display: flex; align-items: center; gap: 0.9rem; }
+  .back {
+    font-family: var(--font-typed);
+    font-size: 0.85rem;
+    color: var(--color-board-ink);
+    text-decoration: underline;
+    text-decoration-color: var(--color-board-blue);
+    text-underline-offset: 0.25em;
+  }
+  .chrome :global(.theme-mode-toggle) {
+    color: var(--color-board-ink);
+    border-color: var(--color-board-ink-muted);
+    border-radius: 0;
+  }
+  @media (max-width: 559px) { .board :global(.job) { display: none; } }
+
+  /* ---------- hero ---------- */
+  .hero {
+    position: relative;
+    margin: clamp(1.5rem, 4vw, 3.2rem) 0 clamp(3rem, 7vw, 6rem);
+    padding: clamp(2.2rem, 5vw, 4.5rem) clamp(0.25rem, 3vw, 3.5rem) clamp(2rem, 4vw, 3.5rem);
+    border: 1px solid var(--color-grid);
+  }
+  .board :global(.reg) { position: absolute; }
+  .board :global(.reg-top) { top: -13px; left: calc(50% - 13px); }
+  .board :global(.reg-left) { left: -13px; top: calc(50% - 13px); }
+  .board :global(.reg-right) { right: -13px; top: calc(50% - 13px); }
+  .disc {
+    position: absolute;
+    right: -4%;
+    top: -12%;
+    width: min(56vw, 34rem);
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background-image: radial-gradient(circle, var(--color-halftone) 40%, transparent 43%);
+    background-size: 11px 11px;
+    -webkit-mask-image: radial-gradient(circle at 40% 60%, black 35%, transparent 71%);
+    mask-image: radial-gradient(circle at 40% 60%, black 35%, transparent 71%);
+    pointer-events: none;
+  }
+  .board :global(.note-set) { position: absolute; top: 0.6rem; left: clamp(0.5rem, 3vw, 3.5rem); }
+  .hl-wrap { position: relative; }
+  .hero-slips {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 1.25rem 2.5rem;
+    margin-top: clamp(1.6rem, 3.5vw, 2.8rem);
+  }
+  .subhead {
+    margin: 0;
+    font-family: var(--font-typed);
+    font-size: clamp(1.15rem, 0.95rem + 1vw, 1.65rem);
+    letter-spacing: 0.02em;
+  }
+  .board :global(.def-slip) { margin-top: 0.4rem; }
+  .def {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: 1.05rem;
+  }
+  .def b { font-weight: 700; }
+  .def i { color: var(--color-text-muted); }
+
+  /* ---------- rows ---------- */
+  .row {
+    position: relative;
+    display: grid;
+    gap: clamp(1.75rem, 4vw, 3.25rem);
+    margin-bottom: clamp(3.5rem, 8vw, 6.5rem);
+    align-items: start;
+  }
+  @media (min-width: 900px) {
+    .scaleup { grid-template-columns: 5fr 7fr; }
+    .voices { grid-template-columns: 1fr 1fr; }
+    .trust { grid-template-columns: 7fr 4fr; }
+    .why { grid-template-columns: 7fr 4fr; align-items: center; }
+    .coalition { grid-template-columns: 4fr 7fr; align-items: center; }
+    .tail { grid-template-columns: 1fr 1fr; align-items: center; }
+    .board :global(.voice-2) { margin-top: 3.5rem; }
+    .scaleup :global(.copy-slip) { margin-top: 2.5rem; }
+  }
+
+  .chart-col { position: relative; }
+  .board :global(.chart-note) { margin: 1rem 0 0 2rem; }
+
+  /* ---------- voices ---------- */
+  .voice-h {
+    margin: 0;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(1.5rem, 1.15rem + 1.4vw, 2.1rem);
+    line-height: 1.05;
+  }
+  .who {
+    margin: 0.7rem 0 0;
+    font-family: var(--font-eyebrow);
+    font-size: 0.74rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+    line-height: 1.6;
+  }
+  .voice-body { margin: 1rem 0 0; font-family: var(--font-body); line-height: 1.6; }
+  .takeaway {
+    margin: 1.2rem 0 0;
+    padding-top: 0.9rem;
+    border-top: 1px solid var(--color-border);
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 1.3rem;
+    line-height: 1.25;
+    color: var(--color-pen-blue);
+    text-transform: lowercase;
+  }
+
+  /* ---------- trust ---------- */
+  .ledger { display: grid; gap: 0.45rem; margin-top: 1.4rem; }
+  .ledger i { display: block; height: 0.95rem; background: var(--color-cutout); }
+  .ledger i:nth-child(1) { width: 72%; }
+  .ledger i:nth-child(2) { width: 54%; transform: rotate(-0.6deg); }
+  .ledger i:nth-child(3) { width: 63%; }
+  .people-col { position: relative; display: grid; gap: 1.5rem; justify-items: start; }
+  .board :global(.person) { margin: 0; max-width: 17rem; }
+  .board :global(.person-fpo) { width: 9rem; }
+  figcaption { margin-top: 0.9rem; display: grid; gap: 0.3rem; }
+  .person-name { font-family: var(--font-typed); font-size: 1.15rem; }
+  .person-role { font-family: var(--font-body); font-size: 0.92rem; line-height: 1.45; }
+  .board :global(.trust-note) { margin-left: 1rem; }
+
+  /* ---------- why ---------- */
+  .board :global(.why-note) { max-width: 18rem; }
+
+  /* ---------- coalition ---------- */
+  .coalition-art { position: relative; max-width: 24rem; width: 100%; justify-self: center; }
+  .board :global(.stat) { position: absolute; right: 0; bottom: 0.5rem; }
+
+  /* ---------- reading + connect ---------- */
+  .reading-eyebrow {
+    margin: 0 0 0.4rem;
+    font-family: var(--font-eyebrow);
+    font-size: 0.74rem;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+  }
+  .reading-link {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 600;
+    font-size: clamp(1.4rem, 1.1rem + 1.2vw, 2rem);
+    color: var(--color-pen-blue);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.18em;
+  }
+  .board :global(.connect) ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0.6rem 2rem; }
+  .board :global(.connect) a {
+    font-family: var(--font-typed);
+    font-size: 1.1rem;
+    color: var(--color-text);
+    text-decoration: underline;
+    text-decoration-color: var(--color-pen-blue);
+    text-underline-offset: 0.25em;
+  }
+  .c-label {
+    font-family: var(--font-eyebrow);
+    font-size: 0.72rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    margin-right: 0.35rem;
+  }
+  .board :global(.connect), .board :global(.reading) { justify-self: start; }
+
+  /* ---------- footer ---------- */
+  .foot { padding-top: 0.5rem; }
+  .red-rule {
+    border: 0;
+    height: 1px;
+    background: var(--color-rule);
+    margin: 0 0 1.6rem;
+  }
+  .signoff {
+    margin: 0 0 0.9rem;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 1.35rem;
+    text-transform: lowercase;
+  }
+  .disclaimer {
+    margin: 0;
+    font-family: var(--font-eyebrow);
+    font-size: 0.72rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--color-board-ink);
+  }
+  .arrow {
+    display: inline-block;
+    width: 0; height: 0;
+    margin-right: 0.6em;
+    border-top: 0.45em solid transparent;
+    border-bottom: 0.45em solid transparent;
+    border-left: 0.75em solid var(--color-board-ink);
+    vertical-align: -0.05em;
+  }
+  .press { display: flex; align-items: center; gap: 1rem; margin-top: 1.8rem; }
+
+  @media (max-width: 759px) {
+    .disc { width: 70vw; right: -22%; top: 46%; opacity: 0.55; }
+    .board :global(.note-set) { font-size: 0.9rem; }
+    .board :global(.chart-note) { margin-left: 0.5rem; }
+  }
+</style>

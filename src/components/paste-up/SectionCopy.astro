@@ -1,0 +1,98 @@
+---
+/* One section of copy as it sits on its slip: the official eyebrow (spaced
+ * geometric caps), the title in hand-set Bodoni, the lead in the lowercase
+ * italic serif voice, the body typed. Copy is the entry's, verbatim.
+ * `circle` rings one phrase of the body in red pen (form, not new words). */
+import type { CollectionEntry } from 'astro:content';
+
+export interface Props {
+  entry: CollectionEntry<'sections'>;
+  circle?: string;
+  headingId?: string;
+}
+const { entry, circle, headingId } = Astro.props;
+const { eyebrow, title, lead } = entry.data;
+
+const paragraphs = (entry.body ?? '')
+  .trim()
+  .split(/\n{2,}/)
+  .map((p) => p.replace(/\s+/g, ' ').trim())
+  .filter(Boolean)
+  .map((p) => {
+    if (!circle || !p.includes(circle)) return { before: p, ring: '', after: '' };
+    const at = p.indexOf(circle);
+    return { before: p.slice(0, at), ring: circle, after: p.slice(at + circle.length) };
+  });
+---
+<div class="pu-copy">
+  {eyebrow && <p class="eyebrow">{eyebrow}</p>}
+  <h2 class="title" id={headingId}>{title}</h2>
+  {lead && <p class="lead">{lead}</p>}
+  {paragraphs.map((p) => (
+    <p class="body">{p.before}{p.ring && <span class="ring">{p.ring}</span>}{p.after}</p>
+  ))}
+  <slot />
+</div>
+
+<style>
+  .pu-copy { max-width: var(--page-measure); }
+  .eyebrow {
+    margin: 0 0 0.6rem;
+    font-family: var(--font-eyebrow);
+    font-weight: 500;
+    font-size: 0.74rem;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+  }
+  .eyebrow::before {
+    content: "";
+    display: inline-block;
+    width: 0; height: 0;
+    margin-right: 0.5em;
+    border-top: 0.38em solid transparent;
+    border-bottom: 0.38em solid transparent;
+    border-left: 0.6em solid var(--color-text);
+    vertical-align: -0.02em;
+  }
+  .title {
+    margin: 0;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-variation-settings: 'opsz' 72;
+    font-size: clamp(1.75rem, 1.2rem + 2.2vw, 2.7rem);
+    line-height: 1.02;
+    letter-spacing: -0.01em;
+    text-wrap: balance;
+    text-shadow: calc(var(--fx-misregister) * 0.6) calc(var(--fx-misregister) * -0.4) 0
+      color-mix(in oklab, var(--color-editor-red) 55%, transparent);
+  }
+  .lead {
+    margin: 0.85rem 0 0;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: clamp(1.15rem, 1rem + 0.6vw, 1.4rem);
+    line-height: 1.28;
+    color: var(--color-text);
+  }
+  .body {
+    margin: 1rem 0 0;
+    font-family: var(--font-body);
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--color-text);
+  }
+  .ring {
+    position: relative;
+    white-space: nowrap;
+  }
+  .ring::after {
+    content: "";
+    position: absolute;
+    inset: -0.32em -0.45em -0.28em -0.4em;
+    border: 2px solid var(--color-editor-red);
+    border-radius: 52% 46% 55% 44% / 60% 48% 52% 40%;
+    transform: rotate(-3deg);
+    pointer-events: none;
+  }
+</style>

@@ -1,0 +1,17 @@
+# A site-local workspace file makes this directory its own pnpm root, so pnpm
+# stops walking up to astro-knots/pnpm-workspace.yaml. No packages: the site
+# is a single project.
+packages: []
+
+# pnpm 11+ fails the install on any build script not approved here. These
+# three are wanted: esbuild (Vite), sharp (Astro images), oxide (Tailwind 4).
+allowBuilds:
+  '@tailwindcss/oxide': true
+  esbuild: true
+  sharp: true
+
+# Kept for pnpm 10 and any CI still on it.
+onlyBuiltDependencies:
+  - '@tailwindcss/oxide'
+  - esbuild
+  - sharp

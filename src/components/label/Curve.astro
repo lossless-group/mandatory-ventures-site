@@ -1,0 +1,140 @@
+---
+/* Curve — "From startup to scaleup", drawn as simply as the label allows.
+ *
+ * Two layers (decisions.md: charts):
+ *   1. typewriter frame — axes, ticks, figure number and axis labels, typed.
+ *   2. marker data — the curve as one felt-tip stroke in marker ink.
+ * The three annotations are written over it in ballpoint hand, each pinned to
+ * a dot on the curve. Positions come from CURVE.points[].at (fractions of the
+ * run). The SVG stretches to its box (preserveAspectRatio none) with
+ * non-scaling strokes, so the box can be taller on a phone; the labels are
+ * HTML placed by percentage so they never shrink to illegible.
+ * Reads: --font-data, --font-hand, --color-text, --color-text-muted,
+ *        --color-grid, --color-marker-blue, --color-pen-blue.
+ */
+import { CURVE } from '@lib/site';
+
+/* Plot box inside a 1000 × 500 viewBox. */
+const X0 = 70, X1 = 960, Y0 = 455, Y1 = 30;
+const K = 4.4; // slow start, steep climb
+const f = (t: number) => (Math.exp(K * t) - 1) / (Math.exp(K) - 1);
+const px = (t: number) => X0 + t * (X1 - X0);
+const py = (t: number) => Y0 - f(t) * (Y0 - Y1);
+
+const steps = 48;
+const d = Array.from({ length: steps + 1 }, (_, i) => {
+  const t = (i / steps) * 0.985;
+  return `${i === 0 ? 'M' : 'L'}${px(t).toFixed(1)} ${py(t).toFixed(1)}`;
+}).join(' ');
+
+const ticks = Array.from({ length: 9 }, (_, i) => X0 + ((i + 1) * (X1 - X0)) / 10);
+
+/* Where each annotation sits relative to its dot. */
+const place = ['above-right', 'above-left', 'left'] as const;
+const marks = CURVE.points.map((p, i) => ({
+  ...p,
+  left: (px(p.at) / 1000) * 100,
+  top: (py(p.at) / 500) * 100,
+  place: place[i] ?? 'above-left',
+}));
+---
+
+<figure class="lb-curve" aria-labelledby="lb-curve-cap">
+  <figcaption id="lb-curve-cap" class="lb-curve__cap">
+    Fig. 1
+  </figcaption>
+
+  <div class="lb-curve__plot">
+    <span class="lb-curve__axis lb-curve__axis--y">↑ {CURVE.y_label}</span>
+
+    <svg class="lb-curve__svg" viewBox="0 0 1000 500" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+      <g class="ink-typewriter">
+        {ticks.map((x) => <line x1={x} y1={Y0} x2={x} y2={Y0 + 9} class="lb-curve__tick" vector-effect="non-scaling-stroke" />)}
+        <path d={`M${X0} ${Y1} L${X0} ${Y0} L${X1} ${Y0}`} class="lb-curve__frame" vector-effect="non-scaling-stroke" />
+      </g>
+      <path d={d} class="lb-curve__data ink-marker" vector-effect="non-scaling-stroke" />
+    </svg>
+
+    {marks.map((m) => (
+      <>
+        <span class="lb-curve__dot" style={`left:${m.left}%;top:${m.top}%`} aria-hidden="true"></span>
+        <span class={`lb-curve__note lb-curve__note--${m.place}`} style={`left:${m.left}%;top:${m.top}%`}>
+          {m.label}
+        </span>
+      </>
+    ))}
+
+    <span class="lb-curve__axis lb-curve__axis--x">{CURVE.x_label} →</span>
+  </div>
+</figure>
+
+<style>
+  .lb-curve { margin: 2rem 0 1.6rem; max-width: 40rem; }
+
+  .lb-curve__cap {
+    font-family: var(--font-data);
+    font-size: 0.8rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+    margin-bottom: 0.3rem;
+  }
+
+  .lb-curve__plot {
+    position: relative;
+    aspect-ratio: 2 / 1;
+    margin: 1.6rem 0 1.8rem;
+  }
+  .lb-curve__svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+
+  .lb-curve__frame { fill: none; stroke: var(--color-text); stroke-width: 1.1; }
+  .lb-curve__tick  { stroke: var(--color-text-muted); stroke-width: 1; }
+  .lb-curve__data {
+    fill: none;
+    stroke: var(--color-marker-blue);
+    stroke-width: 5.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    opacity: 0.92;
+  }
+
+  .lb-curve__axis {
+    position: absolute;
+    font-family: var(--font-data);
+    font-size: 0.78rem;
+    letter-spacing: 0.06em;
+    color: var(--color-text-muted);
+    white-space: nowrap;
+  }
+  .lb-curve__axis--y { left: 7%; top: 0; transform: translateY(-115%); }
+  .lb-curve__axis--x { right: 4%; bottom: 0; transform: translateY(115%); }
+
+  .lb-curve__dot {
+    position: absolute;
+    width: 0.42rem;
+    height: 0.42rem;
+    margin: -0.21rem 0 0 -0.21rem;
+    border-radius: 50%;
+    background: var(--color-pen-blue);
+  }
+
+  .lb-curve__note {
+    position: absolute;
+    width: max-content;
+    max-width: 11rem;
+    font-family: var(--font-hand);
+    font-weight: 500;
+    font-size: 1.12rem;
+    line-height: 1.05;
+    color: var(--color-pen-blue);
+  }
+  .lb-curve__note--above-right { transform: translate(-0.2rem, calc(-100% - 0.55rem)) rotate(-3deg); }
+  .lb-curve__note--above-left  { transform: translate(calc(-100% + 0.6rem), calc(-100% - 0.7rem)) rotate(-2deg); text-align: right; }
+  .lb-curve__note--left        { transform: translate(calc(-100% - 1.6rem), -20%) rotate(-2deg); text-align: right; max-width: 9.5rem; }
+
+  @media (max-width: 560px) {
+    .lb-curve__plot { aspect-ratio: 1 / 0.95; }
+    .lb-curve__note { font-size: 1rem; max-width: 8rem; }
+    .lb-curve__note--left { max-width: 8rem; }
+  }
+</style>
