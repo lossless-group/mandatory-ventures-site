@@ -1,0 +1,9 @@
+---
+/* The dictionary entry, set as the front page's sidebar. */
+interface Props { word: string; part: string; sense: string }
+const { word, part, sense } = Astro.props;
+---
+<dl class="bs-dict">
+  <dt class="bs-dict__word">{word}<span class="bs-dict__part">{part}</span></dt>
+  <dd class="bs-dict__sense" style="margin:0">{sense}</dd>
+</dl>

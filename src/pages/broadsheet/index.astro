@@ -1,0 +1,103 @@
+---
+/* ============================================================================
+ * DIRECTION `broadsheet` — "Broadsheet"
+ *
+ * The site as an editorial front page making one argument. Ported from the
+ * AI Camp Broadsheet spike (design only; no copy travelled). Fraunces display,
+ * Newsreader reading face, IBM Plex Mono furniture; ink on newsprint with one
+ * accent (pen blue) and the editor's red pen, scarce.
+ *
+ * Narrative order, as Broadsheet devices:
+ *   masthead         nameplate (BRAND.name), dateline (domain, Mandatory Reading)
+ *   front page       hero as the headline (italic second line), subhead as the
+ *                    deck with a drop cap, the definition as a dictionary entry
+ *   No. 01 Re        scaleup: statement + coda, lead and red pen in the aside,
+ *                    body in ruled columns, the curve as Fig. 1 with its three
+ *                    annotations as ruled dispatches
+ *   No. 02           the two voices as pull quotes
+ *   No. 03 Note      people and trust, closed by the masthead roster
+ *   No. 04 Why this  op-ed: the head wide, the copy facing it
+ *   No. 05 Structure the coalition; its lead set as two big figures
+ *   closing          "Because it's mandatory." as large as the headline
+ *   colophon         connect, Mandatory Reading, disclaimer
+ *
+ * Every line of copy comes from src/lib/site.ts and src/content/. Furniture
+ * added: "No. 0n", "Two voices", "Masthead", "Fig. 1", "Colophon",
+ * "Connect", "Mandatory Reading", "Directions".
+ * ========================================================================== */
+import { getCollection, render } from 'astro:content';
+import BaseThemeLayout from '../../layouts/BaseThemeLayout.astro';
+import Masthead from '../../components/broadsheet/Masthead.astro';
+import FrontPage from '../../components/broadsheet/FrontPage.astro';
+import Story from '../../components/broadsheet/Story.astro';
+import CurveChart from '../../components/broadsheet/CurveChart.astro';
+import Voices from '../../components/broadsheet/Voices.astro';
+import Roster from '../../components/broadsheet/Roster.astro';
+import Figures from '../../components/broadsheet/Figures.astro';
+import Closing from '../../components/broadsheet/Closing.astro';
+import Colophon from '../../components/broadsheet/Colophon.astro';
+import { BRAND, DEFINITION, CURVE, PEOPLE, CONNECT, DISCLAIMER } from '../../lib/site';
+import { getReading } from '../../lib/reading';
+
+const sections = (await getCollection('sections')).sort((a, b) => a.data.order - b.data.order);
+const voices = (await getCollection('voices')).sort((a, b) => a.data.order - b.data.order);
+const reading = (await getReading()).map((r) => ({ href: `/broadsheet/reading/${r.id}/`, title: r.data.title }));
+
+function section(id: string) {
+  const s = sections.find((e) => e.data.slug_id === id);
+  if (!s) throw new Error(`broadsheet/index.astro: missing section "${id}"`);
+  return s;
+}
+const scaleup = section('scaleup');
+const trust = section('trust');
+const why = section('why');
+const coalition = section('coalition');
+
+const { Content: ScaleupBody } = await render(scaleup);
+const { Content: TrustBody } = await render(trust);
+const { Content: WhyBody } = await render(why);
+const { Content: CoalitionBody } = await render(coalition);
+const voiceItems = await Promise.all(
+  voices.map(async (v) => ({ ...v.data, Body: (await render(v)).Content })),
+);
+---
+
+<BaseThemeLayout
+  title="Mandatory Ventures: Broadsheet"
+  description={`${BRAND.hero} ${BRAND.subhead}`}
+  theme="broadsheet"
+  mode="light"
+>
+  <div class="bs">
+    <Masthead name={BRAND.name} domain={BRAND.domain} home="/broadsheet/" reading={reading[0]} />
+
+    <main id="main">
+      <FrontPage hero={BRAND.hero} subhead={BRAND.subhead} definition={DEFINITION} />
+
+      <Story n={1} id="scaleup" eyebrow={scaleup.data.eyebrow} title={scaleup.data.title} lead={scaleup.data.lead} note={scaleup.data.editor_note}>
+        <ScaleupBody />
+        <CurveChart slot="after" xLabel={CURVE.x_label} yLabel={CURVE.y_label} points={CURVE.points} />
+      </Story>
+
+      <Voices n={2} voices={voiceItems} />
+
+      <Story n={3} id="trust" eyebrow={trust.data.eyebrow} title={trust.data.title} lead={trust.data.lead} note={trust.data.editor_note}>
+        <TrustBody />
+        <Roster slot="after" people={PEOPLE} />
+      </Story>
+
+      <Story n={4} id="why" variant="oped" eyebrow={why.data.eyebrow} title={why.data.title} lead={why.data.lead} note={why.data.editor_note}>
+        <WhyBody />
+      </Story>
+
+      <Story n={5} id="coalition" eyebrow={coalition.data.eyebrow} title={coalition.data.title} note={coalition.data.editor_note}>
+        {coalition.data.lead && <Figures slot="figure" text={coalition.data.lead} />}
+        <CoalitionBody />
+      </Story>
+
+      <Closing line={BRAND.sign_off} reading={reading[0]} />
+    </main>
+
+    <Colophon name={BRAND.name} domain={BRAND.domain} connect={CONNECT} reading={reading} disclaimer={DISCLAIMER} />
+  </div>
+</BaseThemeLayout>

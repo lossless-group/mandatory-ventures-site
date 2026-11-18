@@ -1,0 +1,32 @@
+---
+/* The hero as a front page: the headline set poster-size with an italic
+ * second line, the subhead as the deck under a thick rule (drop cap), the
+ * definition as a dictionary-entry sidebar. In vibrant it prints as a
+ * marker-blue poster sheet (.bs-poster). */
+import Definition from './Definition.astro';
+import { coda } from './text';
+
+interface Props {
+  hero: string;
+  subhead: string;
+  definition: { word: string; part: string; sense: string };
+}
+const { hero, subhead, definition } = Astro.props;
+/* "Coordinating capital into" / "the world's most important companies." */
+const at = hero.indexOf(' the ');
+const [a, b] = at > 0 ? [hero.slice(0, at), hero.slice(at + 1)] : coda(hero);
+---
+<section class="bs-front bs-poster" aria-labelledby="bs-headline">
+  <div class="bs-wrap bs-front__grid">
+    <h1 class="bs-front__headline" id="bs-headline">
+      <span class="bs-line">{a}</span>
+      <span class="bs-line">{b}</span>
+    </h1>
+    <div class="bs-front__lede">
+      <p class="bs-front__deck">{subhead}</p>
+    </div>
+    <div class="bs-front__side">
+      <Definition {...definition} />
+    </div>
+  </div>
+</section>

@@ -1,0 +1,40 @@
+---
+/* The footer as a colophon: the nameplate, connect, Mandatory Reading, and
+ * the disclaimer on the legal line. */
+interface Link { label: string; handle: string; href: string }
+interface Props {
+  name: string;
+  domain: string;
+  connect: readonly Link[];
+  reading: { href: string; title: string }[];
+  disclaimer: string;
+}
+const { name, domain, connect, reading, disclaimer } = Astro.props;
+---
+<footer class="bs-footer bs-wrap">
+  <hr class="bs-rule" />
+  <div class="bs-footer__grid">
+    <div class="bs-footer__brand">
+      <span class="bs-footer__name">{name}</span>
+      <span class="bs-label">Colophon &middot; {domain}</span>
+    </div>
+    <nav aria-labelledby="bs-connect">
+      <h2 id="bs-connect">Connect</h2>
+      <ul>
+        {connect.map((c) => (
+          <li><a href={c.href} rel="me noopener">{c.label}</a><span class="bs-footer__handle">{c.handle}</span></li>
+        ))}
+      </ul>
+    </nav>
+    {reading.length > 0 && (
+      <nav aria-labelledby="bs-reading">
+        <h2 id="bs-reading">Mandatory Reading</h2>
+        <ul>{reading.map((r) => <li><a href={r.href}>{r.title}</a></li>)}</ul>
+      </nav>
+    )}
+  </div>
+  <div class="bs-footer__legal">
+    <span>{disclaimer}</span>
+    <a href="/">&larr; Directions</a>
+  </div>
+</footer>

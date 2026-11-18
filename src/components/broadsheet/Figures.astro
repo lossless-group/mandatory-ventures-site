@@ -1,0 +1,10 @@
+---
+/* A lead made of short sentences ("No entity. No admin.") set as big
+ * typographic figures in ruled cells, the way the front page sets numbers. */
+interface Props { text: string }
+const { text } = Astro.props;
+const parts = text.split(/(?<=\.)\s+/).filter(Boolean);
+---
+<p class="bs-figures">
+  {parts.map((p) => <span class="bs-figure">{p}</span>)}
+</p>

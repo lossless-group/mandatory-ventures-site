@@ -59,4 +59,5 @@ export const DIRECTIONS = [
   { slug: 'label', name: 'Label', mode: 'light' },
   { slug: 'report', name: 'Annual Report', mode: 'light' },
   { slug: 'paste-up', name: 'Paste-Up', mode: 'light' },
+  { slug: 'broadsheet', name: 'Broadsheet', mode: 'light' },
 ] as const;

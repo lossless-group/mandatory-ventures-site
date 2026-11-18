@@ -6,6 +6,7 @@
 @import "./themes/label.css";
 @import "./themes/report.css";
 @import "./themes/paste-up.css";
+@import "./themes/broadsheet.css";
 
 /* ============================================================================
  * TIER 1 — NAMED TOKENS. Raw values only, BEM-ish `__` separator.
@@ -68,6 +69,10 @@
   --font__cutive-mono:       'Cutive Mono', 'Courier New', ui-monospace, monospace;
   --font__caveat:            'Caveat', 'Bradley Hand', cursive;
   --font__nanum-pen:         'Nanum Pen Script', 'Bradley Hand', cursive;
+  /* Broadsheet's editorial set (direction-loaded, see components/broadsheet/Fonts). */
+  --font__fraunces:          'Fraunces', 'Iowan Old Style', 'Palatino Linotype', Georgia, serif;
+  --font__newsreader:        'Newsreader', 'Iowan Old Style', Georgia, 'Times New Roman', serif;
+  --font__plex-mono:         'IBM Plex Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
 }
 
 /* ============================================================================

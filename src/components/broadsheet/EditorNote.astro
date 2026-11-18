@@ -1,0 +1,11 @@
+---
+/* The editor's red pen: the humor channel, one per section at most. */
+interface Props { text: string }
+const { text } = Astro.props;
+---
+<aside class="bs-note" aria-label="Editor's note">
+  <svg class="ink-ballpoint" viewBox="0 0 40 24" aria-hidden="true" focusable="false">
+    <path d="M2 14 C 10 10, 22 9, 34 12 M27 6 L35 12 L27 18" />
+  </svg>
+  <span>{text}</span>
+</aside>

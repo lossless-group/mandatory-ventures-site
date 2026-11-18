@@ -1,0 +1,156 @@
+/* ============================================================================
+ * DIRECTION `broadsheet` — "Broadsheet"
+ *
+ * TIER 2 semantic tokens. kebab-case only. Tier 1 `--color__*` / `--font__*`
+ * live in global.css and are referenced ONLY from inside this file.
+ *
+ * The premise: an editorial front page making one argument. Ported from the
+ * AI Camp Broadsheet spike; only the design travelled. A nameplate, a
+ * poster-size headline with an italic second line, a drop-cap lede, rules
+ * and columns on an asymmetric grid, numbered sections, pull quotes, a
+ * masthead roster, a closing line that mirrors the hero, a colophon.
+ * Ink on newsprint, ONE accent (pen blue). Red is the editor's pen only.
+ *
+ * Type, by job
+ *   display  Fraunces          the nameplate, the headline, section heads
+ *   body     Newsreader        the reading face
+ *   data     IBM Plex Mono     chart frame, numerals, captions, folios
+ *   eyebrow  IBM Plex Mono     "No. 02 —" labels, small caps furniture
+ *   hand     Caveat            the editor's red pen (scarce)
+ *   lockup   Fraunces          the nameplate
+ *
+ * Rules are INK here (thick over thin), not the red hairline the other
+ * directions use: --color-rule is the text colour. Red stays for the pen.
+ *
+ * Mode intent
+ *   light   — newsprint: bone paper, typewriter black, pen blue.
+ *   dark    — the night edition: carbon stock, cream ink, lifted blue.
+ *   vibrant — the poster edition: DARK-BASED navy stock, marker-blue rules,
+ *             and the front page and closing line printed as full marker-
+ *             blue sheets with cream type. Every ground, surface, text and
+ *             border is set explicitly.
+ * ========================================================================== */
+
+[data-theme="broadsheet"] {
+  --font-display: var(--font__fraunces);
+  --font-body:    var(--font__newsreader);
+  --font-data:    var(--font__plex-mono);
+  --font-eyebrow: var(--font__plex-mono);
+  --font-hand:    var(--font__caveat);
+  --font-lockup:  var(--font__fraunces);
+
+  --radius-control: 0;
+  --page-measure:   82.5rem;
+  --page-gutter:    clamp(1rem, 4vw, 3rem);
+
+  --fx-rough-scale: 0.6;
+  --fx-misregister: 0px;
+}
+
+/* --------------------------------------------------------------- light --- */
+[data-theme="broadsheet"][data-mode="light"] {
+  --color-background:     var(--color__paper-bone);
+  --color-surface:        var(--color__paper-bone);
+  --color-surface-raised: var(--color__paper-foxed);
+
+  --color-text:           var(--color__typewriter-black);
+  --color-text-muted:     color-mix(in srgb, var(--color__typewriter-black) 74%, var(--color__paper-bone));
+  --color-text-faint:     color-mix(in srgb, var(--color__typewriter-black) 62%, var(--color__paper-bone));
+
+  --color-primary:        var(--color__pen-blue);
+  --color-primary-soft:   color-mix(in srgb, var(--color__marker-blue) 14%, var(--color__paper-bone));
+  --color-accent:         var(--color__pen-blue);
+
+  --color-pen-blue:       var(--color__pen-blue);
+  --color-marker-blue:    var(--color__marker-blue);
+  --color-editor-red:     var(--color__fusion-red);
+
+  --color-band-1:         var(--color__deep-slate);
+  --color-band-2:         var(--color__mauve-grey);
+  --color-band-3:         var(--color__sage-band);
+  --color-band-4:         var(--color__teal-band);
+
+  --color-border:         color-mix(in srgb, var(--color__typewriter-black) 24%, var(--color__paper-bone));
+  --color-rule:           var(--color__typewriter-black);
+  --color-grid:           color-mix(in srgb, var(--color__typewriter-black) 12%, var(--color__paper-bone));
+
+  --fx-grain-opacity:     0.06;
+}
+
+/* ---------------------------------------------------------------- dark --- */
+[data-theme="broadsheet"][data-mode="dark"] {
+  --color-background:     var(--color__carbon);
+  --color-surface:        var(--color__carbon);
+  --color-surface-raised: var(--color__carbon-raised);
+
+  --color-text:           var(--color__cream-lit);
+  --color-text-muted:     color-mix(in srgb, var(--color__cream-lit) 74%, var(--color__carbon));
+  --color-text-faint:     color-mix(in srgb, var(--color__cream-lit) 58%, var(--color__carbon));
+
+  --color-primary:        var(--color__blue-lit);
+  --color-primary-soft:   color-mix(in srgb, var(--color__marker-lit) 14%, var(--color__carbon));
+  --color-accent:         var(--color__blue-lit);
+
+  --color-pen-blue:       var(--color__blue-lit);
+  --color-marker-blue:    var(--color__marker-lit);
+  --color-editor-red:     var(--color__red-lit);
+
+  --color-band-1:         color-mix(in srgb, var(--color__deep-slate) 70%, var(--color__mauve-grey));
+  --color-band-2:         color-mix(in srgb, var(--color__mauve-grey) 52%, var(--color__carbon));
+  --color-band-3:         color-mix(in srgb, var(--color__sage-band) 62%, var(--color__carbon));
+  --color-band-4:         color-mix(in srgb, var(--color__teal-band) 56%, var(--color__carbon));
+
+  --color-border:         var(--color__carbon-line);
+  --color-rule:           var(--color__cream-lit);
+  --color-grid:           color-mix(in srgb, var(--color__cream-lit) 12%, var(--color__carbon));
+
+  --fx-grain-opacity:     0.05;
+}
+
+/* ------------------------------------------------------------- vibrant --- */
+/* The poster edition: navy stock, marker-blue rules, cream ink. */
+[data-theme="broadsheet"][data-mode="vibrant"] {
+  --color-background:     color-mix(in srgb, var(--color__pen-blue) 34%, var(--color__carbon));
+  --color-surface:        color-mix(in srgb, var(--color__pen-blue) 34%, var(--color__carbon));
+  --color-surface-raised: color-mix(in srgb, var(--color__pen-blue) 48%, var(--color__carbon));
+
+  --color-text:           var(--color__cream-lit);
+  --color-text-muted:     color-mix(in srgb, var(--color__cream-lit) 78%, var(--color__pen-blue));
+  --color-text-faint:     color-mix(in srgb, var(--color__cream-lit) 62%, var(--color__pen-blue));
+
+  --color-primary:        var(--color__marker-lit);
+  --color-primary-soft:   color-mix(in srgb, var(--color__marker-lit) 18%, var(--color__carbon));
+  --color-accent:         var(--color__blue-lit);
+
+  --color-pen-blue:       var(--color__blue-lit);
+  --color-marker-blue:    var(--color__marker-lit);
+  --color-editor-red:     var(--color__red-lit);
+
+  --color-band-1:         var(--color__deep-slate);
+  --color-band-2:         var(--color__mauve-grey);
+  --color-band-3:         var(--color__sage-band);
+  --color-band-4:         var(--color__teal-band);
+
+  --color-border:         color-mix(in srgb, var(--color__cream-lit) 24%, var(--color__pen-blue));
+  --color-rule:           var(--color__marker-lit);
+  --color-grid:           color-mix(in srgb, var(--color__cream-lit) 12%, var(--color__pen-blue));
+
+  --fx-grain-opacity:     0.07;
+}
+
+/* Poster panels: in vibrant the front page and the closing line print as
+ * full marker-blue sheets with cream type. Tier 2 re-pointed in scope. */
+[data-theme="broadsheet"][data-mode="vibrant"] .bs-poster {
+  --color-background:     var(--color__marker-blue);
+  --color-surface:        var(--color__marker-blue);
+  --color-surface-raised: color-mix(in srgb, var(--color__marker-blue) 80%, var(--color__carbon));
+  --color-text:           var(--color__atomic-cream);
+  --color-text-muted:     color-mix(in srgb, var(--color__atomic-cream) 86%, var(--color__marker-blue));
+  --color-text-faint:     color-mix(in srgb, var(--color__atomic-cream) 74%, var(--color__marker-blue));
+  --color-primary:        var(--color__atomic-cream);
+  --color-accent:         var(--color__atomic-cream);
+  --color-border:         color-mix(in srgb, var(--color__atomic-cream) 45%, var(--color__marker-blue));
+  --color-rule:           var(--color__atomic-cream);
+  background: var(--color-background);
+  color: var(--color-text);
+}

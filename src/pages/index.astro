@@ -1,5 +1,5 @@
 ---
-/* The chooser. Internal: three directions over one content spine. When one is
+/* The chooser. Internal: four directions over one content spine. When one is
  * picked it is promoted to `/` and the other two are deleted (their route,
  * component folder and theme file). */
 import BaseThemeLayout from '../layouts/BaseThemeLayout.astro';
@@ -28,6 +28,13 @@ const directions = [
     blurb:
       'The page as a mechanical mid-production: typed slips pasted on a board, a misregistered two-color headline, halftone screens, crop marks, red-pen corrections, one cut-out joke.',
   },
+  {
+    slug: 'broadsheet',
+    name: 'Broadsheet',
+    stance: 'Editorial front page',
+    blurb:
+      'Ported from the AI Camp spike: a nameplate, a poster-size headline with an italic second line, numbered sections under ink rules, pull quotes, a masthead roster, a colophon. Ink on newsprint, one blue.',
+  },
 ];
 ---
 
@@ -44,7 +51,7 @@ const directions = [
 
   <main class="chooser" id="main">
     <p class="eyebrow">Internal &middot; not the homepage</p>
-    <h1>three ways to print <em>the same page.</em></h1>
+    <h1>four ways to print <em>the same page.</em></h1>
     <p class="lede">
       Every direction reads the same narrative, the same four sections, the same
       two voices and the same disclaimer. Only the form changes. Each one also
@@ -52,7 +59,7 @@ const directions = [
     </p>
 
     <ul class="facts">
-      <li><span class="v tabular">3</span> directions</li>
+      <li><span class="v tabular">{directions.length}</span> directions</li>
       <li><span class="v tabular">3</span> modes each</li>
       <li><span class="v tabular">{WORD_BUDGET}</span> word ceiling</li>
     </ul>

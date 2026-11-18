@@ -1,0 +1,31 @@
+---
+/* The site header as a newspaper masthead: a strip (back to the chooser,
+ * mode toggle), the nameplate, and a dateline between a thick and a thin
+ * rule. `small` is the inside-page version for Mandatory Reading. */
+import ModeToggle from '../ui/ModeToggle.astro';
+import Fonts from './Fonts.astro';
+import './broadsheet.css';
+
+interface Props {
+  name: string;
+  domain: string;
+  home: string;
+  small?: boolean;
+  reading?: { href: string; title: string };
+}
+const { name, domain, home, small = false, reading } = Astro.props;
+---
+<Fonts />
+<header class="bs-masthead bs-wrap">
+  <div class="bs-masthead__top">
+    <a href="/">&larr; Directions</a>
+    <div class="bs-masthead__tools"><ModeToggle /></div>
+  </div>
+  <div class="bs-masthead__plate">
+    <a class:list={['bs-nameplate', small && 'bs-nameplate--small']} href={home}>{name}</a>
+  </div>
+  <div class="bs-masthead__dateline">
+    <span>{domain}</span>
+    {reading && <a href={reading.href}>Mandatory Reading &rarr;</a>}
+  </div>
+</header>

@@ -1,0 +1,55 @@
+---
+/* One section of the spine as a newspaper story: the numbered section head
+ * (its eyebrow as the label), the title as a statement with an italic coda,
+ * then either
+ *   `columns` — the lead and editor's note in a ruled aside, the body in two
+ *               ruled columns with a drop cap; or
+ *   `oped`    — the head running wide on the left, lead, body and note
+ *               facing it across a hairline.
+ * A `figure` slot sits between the head and the body; an `after` slot
+ * closes the section (the chart, the roster). */
+import SectionHead from './SectionHead.astro';
+import EditorNote from './EditorNote.astro';
+import { coda } from './text';
+
+interface Props {
+  n: number;
+  id: string;
+  eyebrow?: string;
+  title: string;
+  lead?: string;
+  note?: string;
+  variant?: 'columns' | 'oped';
+}
+const { n, id, eyebrow, title, lead, note, variant = 'columns' } = Astro.props;
+const [statement, tail] = coda(title);
+const label = (eyebrow ?? '').replace(/:$/, '');
+---
+<section class:list={['bs-section', 'bs-wrap', 'bs-story', `bs-story--${variant}`]} id={id} aria-labelledby={`${id}-head`}>
+  {label && <SectionHead n={n} title={label} />}
+  {variant === 'columns' ? (
+    <>
+      <h2 class="bs-story__head" id={`${id}-head`}>{statement}{tail && <> <em>{tail}</em></>}</h2>
+      <slot name="figure" />
+      <div class="bs-story__body">
+        {(lead || note) && (
+          <div class="bs-story__aside">
+            {lead && <p class="bs-story__lead">{lead}</p>}
+            {note && <EditorNote text={note} />}
+          </div>
+        )}
+        <div class:list={['bs-story__cols', !(lead || note) && 'bs-story__cols--full']}><slot /></div>
+      </div>
+    </>
+  ) : (
+    <div class="bs-story__body">
+      <h2 class="bs-story__head" id={`${id}-head`}>{statement}{tail && <> <em>{tail}</em></>}</h2>
+      <div class="bs-story__right">
+        {lead && <p class="bs-story__lead">{lead}</p>}
+        <slot />
+        {note && <EditorNote text={note} />}
+      </div>
+    </div>
+  )}
+  <slot name="after" />
+</section>

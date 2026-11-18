@@ -1,0 +1,22 @@
+---
+/* People as the paper's masthead: a monogram in a ruled box (no portraits
+ * until people agree to appear), the name in display serif, the role in mono. */
+interface Person { name: string; role: string }
+interface Props { people: readonly Person[] }
+const { people } = Astro.props;
+const initials = (n: string) => n.split(' ').map((w) => w[0]).join('');
+---
+<div class="bs-roster-wrap">
+  <span class="bs-label">Masthead</span>
+  <ul class="bs-roster">
+    {people.map((p) => (
+      <li>
+        <span class="bs-roster__mono" aria-hidden="true">{initials(p.name)}</span>
+        <span>
+          <span class="bs-roster__name">{p.name}</span>
+          <span class="bs-roster__role">{p.role}</span>
+        </span>
+      </li>
+    ))}
+  </ul>
+</div>

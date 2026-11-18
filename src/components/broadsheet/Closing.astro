@@ -1,0 +1,22 @@
+---
+/* The closing line set as large as the headline, mirroring it: the sign-off
+ * with its last word in italic pen blue. No call to action; the foot carries
+ * Mandatory Reading as a link. A poster sheet in vibrant. */
+interface Props { line: string; reading?: { href: string; title: string } }
+const { line, reading } = Astro.props;
+const m = line.match(/^(.*\s)(\S+)$/);
+---
+<section class="bs-closing bs-poster" aria-labelledby="bs-closing-line">
+  <div class="bs-wrap">
+    <hr class="bs-rule" />
+    <h2 class="bs-closing__line" id="bs-closing-line">
+      {m ? <>{m[1]}<em>{m[2]}</em></> : line}
+    </h2>
+    {reading && (
+      <div class="bs-closing__foot">
+        <span class="bs-label">Mandatory Reading</span>
+        <a href={reading.href}>{reading.title}</a>
+      </div>
+    )}
+  </div>
+</section>

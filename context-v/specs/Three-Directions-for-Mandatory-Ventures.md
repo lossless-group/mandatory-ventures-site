@@ -2,7 +2,7 @@
 title: "Three Directions for Mandatory Ventures"
 lede: "Spike three design directions for mandatory.ventures against one content spine, all inside the brand guidance agreed on the mood board."
 date_created: 2026-11-12
-date_modified: 2026-11-12
+date_modified: 2026-11-18
 authors:
   - Michael Staton
 augmented_with:
@@ -74,6 +74,7 @@ appear wherever the direction wants.
 | `label` | Label | **Closest to the north star.** The whole site is the parcel label and letterhead: a printed letterhead zone, one red rule, typed content below, deadpan official small print. The quietest direction; almost no flair. |
 | `report` | Annual Report | **Reinterprets the source.** A 1960s corporate annual report (General Dynamics, Nitsche): an extended-caps lockup, a Nitsche banded field as the cover, the curve as a chart (typewriter frame, marker data), a Northwest-style table, silhouette illustration, spreads with one photo-like plate facing one narrow column. |
 | `paste-up` | Paste-Up | **Furthest from the source; flair-forward.** The design visibly struggling with print: a paste-up board, misregistered two-color headlines, halftone dots, Letraset-style display, crop and registration marks, typed slips pasted on, red-pen corrections and margin notes everywhere they're funny, one Gilliam-style cut-out moment built in SVG/CSS (no raster collage). |
+| `broadsheet` | Broadsheet | **Editorial front page; ported from the AI Camp spike, closest to what Michael wants.** A nameplate masthead, a poster-size headline with an italic second line, a drop-cap deck, numbered sections under ink rules, pull quotes, a masthead roster, a closing line that mirrors the hero, a colophon. Fraunces, Newsreader, IBM Plex Mono; ink on newsprint, pen blue as the one accent, red only for the editor's pen. |
 
 Each direction owns exactly:
 

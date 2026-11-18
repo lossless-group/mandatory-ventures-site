@@ -16,7 +16,7 @@
 // - Multi-brand sites: add brand keys, e.g. ['label', 'water', 'matter'].
 // ============================================================================
 
-const VALID_THEMES = ['label', 'report', 'paste-up'];
+const VALID_THEMES = ['label', 'report', 'paste-up', 'broadsheet'];
 
 export class ThemeSwitcher {
   constructor() {

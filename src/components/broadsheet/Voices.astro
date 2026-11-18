@@ -1,0 +1,25 @@
+---
+/* The two audiences as pull quotes on an asymmetric grid: the takeaway is
+ * the quote, the body runs under it, the audience and "who" sign it.
+ * Large-scale capital first, set larger, per the narrative. */
+import SectionHead from './SectionHead.astro';
+
+interface Voice { audience: string; who: string; takeaway: string; Body: any }
+interface Props { n: number; voices: Voice[] }
+const { n, voices } = Astro.props;
+---
+<section class="bs-section bs-wrap" id="voices" aria-labelledby="voices-head">
+  <SectionHead n={n} title="Two voices" id="voices-head" />
+  <div class="bs-quotes">
+    {voices.map(({ audience, who, takeaway, Body }) => (
+      <figure class="bs-quote">
+        <blockquote><p>{takeaway}</p></blockquote>
+        <div class="bs-quote__body"><Body /></div>
+        <figcaption>
+          <cite>{audience}</cite>
+          <span>{who}</span>
+        </figcaption>
+      </figure>
+    ))}
+  </div>
+</section>

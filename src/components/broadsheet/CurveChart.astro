@@ -1,0 +1,78 @@
+---
+/* The curve from the decks, redrawn as an editorial chart. Two layers, per
+ * the brand's chart rule:
+ *   1. A set frame: hairline axes, a quiet grid, mono axis labels.
+ *   2. The data as one felt-tip stroke (.ink-marker) in marker blue, with
+ *      numbered keys at the three annotation points.
+ * The annotations themselves run under the chart as three ruled "dispatch"
+ * columns, so the chart stays legible at 360px. The last point (where the
+ * pretending starts) is circled in the editor's red pen. No numbers are
+ * invented: the axes carry only the spine's labels. */
+interface Point { at: number; label: string }
+interface Props { xLabel: string; yLabel: string; points: readonly Point[] }
+const { xLabel, yLabel, points } = Astro.props;
+
+const W = 960, H = 420;
+const L = 40, R = 930, T = 40, B = 360;
+const k = 4.6;
+const f = (x: number) => (Math.exp(k * x) - 1) / (Math.exp(k) - 1);
+const px = (x: number) => L + (R - L) * x;
+const py = (x: number) => B - 10 - (B - T - 30) * f(x);
+const steps = 80;
+const curve = Array.from({ length: steps + 1 }, (_, i) => {
+  const x = 0.02 + (0.96 * i) / steps;
+  return `${i === 0 ? 'M' : 'L'}${px(x).toFixed(1)} ${py(x).toFixed(1)}`;
+}).join(' ');
+const area = `${curve} L${px(0.98).toFixed(1)} ${B} L${px(0.02).toFixed(1)} ${B} Z`;
+const grid = [0.25, 0.5, 0.75].map((g) => B - (B - T) * g);
+const desc = points.map((p, i) => `${i + 1}: ${p.label}`).join(' ');
+const keyOffset = [ { dx: 0, dy: -46 }, { dx: -44, dy: -30 }, { dx: -64, dy: 12 } ];
+---
+<figure class="bs-chart" aria-labelledby="bs-chart-title">
+  <div class="bs-chart__cap">
+    <span class="bs-label" id="bs-chart-title">Fig. 1</span>
+    <span class="bs-label">{yLabel} / {xLabel}</span>
+  </div>
+  <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-labelledby="bs-chart-svg-title bs-chart-svg-desc">
+    <title id="bs-chart-svg-title">The curve: slow at first, then a steep climb.</title>
+    <desc id="bs-chart-svg-desc">{`${yLabel} against ${xLabel}. ${desc}`}</desc>
+    <path class="bsc-area" d={area} />
+    {grid.map((y) => <line class="bsc-grid" x1={L} x2={R} y1={y} y2={y} />)}
+    <polyline class="bsc-axis" points={`${L},${T - 10} ${L},${B} ${R + 10},${B}`} />
+    <text class="bsc-type" x={L + 10} y={T - 14}>{yLabel}</text>
+    <text class="bsc-type" x={R + 10} y={B + 30} text-anchor="end">{xLabel}</text>
+    <path class="bsc-line ink-marker" d={curve} />
+    {points.map((p, i) => {
+      const x = px(p.at), y = py(p.at);
+      const o = keyOffset[i] ?? { dx: -24, dy: -24 };
+      const last = i === points.length - 1;
+      return (
+        <g class={last ? 'bsc-pt bsc-pt--mock' : 'bsc-pt'}>
+          <circle class="bsc-dot" cx={x} cy={y} r="8" />
+          <text class="bsc-key" x={x + o.dx} y={y + o.dy} text-anchor="middle">{String(i + 1).padStart(2, '0')}</text>
+          {last && <ellipse class="bsc-ring ink-ballpoint" cx={x - 2} cy={y + 2} rx="38" ry="26" transform={`rotate(-14 ${x} ${y})`} />}
+        </g>
+      );
+    })}
+  </svg>
+  <ol class="bs-chart__notes">
+    {points.map((p, i) => (
+      <li>
+        <span class="bs-chart__no">{String(i + 1).padStart(2, '0')}</span>
+        <span class="bs-chart__label">{p.label}</span>
+      </li>
+    ))}
+  </ol>
+</figure>
+
+<style>
+  .bsc-area { fill: var(--color-primary-soft); }
+  .bsc-grid { stroke: var(--color-grid); stroke-width: 1; stroke-dasharray: 2 5; }
+  .bsc-axis { stroke: var(--color-rule); stroke-width: 1.5; fill: none; }
+  .bsc-type { font-family: var(--font-data); font-size: 22px; letter-spacing: 0.06em; text-transform: uppercase; fill: var(--color-text-muted); }
+  .bsc-line { fill: none; stroke: var(--color-marker-blue); stroke-width: 9; stroke-linecap: round; stroke-linejoin: round; }
+  .bsc-dot { fill: var(--color-background); stroke: var(--color-text); stroke-width: 3; }
+  .bsc-key { font-family: var(--font-data); font-size: 30px; font-weight: 600; fill: var(--color-text); }
+  .bsc-pt--mock .bsc-key { fill: var(--color-editor-red); }
+  .bsc-ring { fill: none; stroke: var(--color-editor-red); stroke-width: 2.6; }
+</style>

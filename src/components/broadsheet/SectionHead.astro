@@ -1,0 +1,13 @@
+---
+/* Numbered section break: double rule, then "No. 02 — Two voices". The
+ * title span carries an id so the section can be labelled by it. */
+import { no } from './text';
+interface Props { n: number; title: string; id?: string; aside?: string }
+const { n, title, id, aside } = Astro.props;
+---
+<hr class="bs-rule" />
+<div class="bs-sechead">
+  <span class="bs-sechead__no">{no(n)}</span>
+  <span class="bs-sechead__title" id={id}>&mdash; {title}</span>
+  {aside && <span class="bs-sechead__aside">{aside}</span>}
+</div>

@@ -1,0 +1,66 @@
+---
+/* ============================================================================
+ * DIRECTION `broadsheet` — Mandatory Reading article.
+ *
+ * Set as an inside page of the paper: the small nameplate and dateline, a
+ * "No. 01 — Mandatory Reading" kicker, the title as statement + italic coda,
+ * the lede as a deck under a thick rule, a ruled mono byline, the body in
+ * Newsreader on one measure with a drop cap, sources as mono footnotes, and
+ * the colophon. Bodies go through the shared @lossless-group/lfm pipeline
+ * (src/lib/reading.ts) and AstroMarkdown.
+ * ========================================================================== */
+import BaseThemeLayout from '../../../layouts/BaseThemeLayout.astro';
+import AstroMarkdown from '../../../components/markdown/AstroMarkdown.astro';
+import Sources from '../../../components/markdown/Sources.astro';
+import Masthead from '../../../components/broadsheet/Masthead.astro';
+import Colophon from '../../../components/broadsheet/Colophon.astro';
+import { coda, no } from '../../../components/broadsheet/text';
+import { getReading, parseReading, readingDate, type ReadingEntry } from '../../../lib/reading';
+import { BRAND, CONNECT, DISCLAIMER } from '../../../lib/site';
+
+export async function getStaticPaths() {
+  const entries = await getReading();
+  return entries.map((entry, i) => ({ params: { slug: entry.id }, props: { entry, index: entries.length - i } }));
+}
+
+interface Props { entry: ReadingEntry; index: number }
+const { entry, index } = Astro.props;
+const { tree, citations } = await parseReading(entry);
+const { title, lede, date_created, authors } = entry.data;
+const [statement, tail] = coda(title);
+const reading = (await getReading()).map((r) => ({ href: `/broadsheet/reading/${r.id}/`, title: r.data.title }));
+---
+
+<BaseThemeLayout
+  title={`${title}: Mandatory Reading`}
+  description={lede ?? BRAND.hero}
+  theme="broadsheet"
+  mode="light"
+>
+  <div class="bs">
+    <Masthead name={BRAND.name} domain={BRAND.domain} home="/broadsheet/" small />
+
+    <main id="main" class="bs-article">
+      <p class="bs-article__kicker">
+        <span class="bs-sechead__no">{no(index)}</span>
+        <span class="bs-label">&mdash; Mandatory Reading</span>
+      </p>
+      <h1 class="bs-article__title">{statement}{tail && <> <em>{tail}</em></>}</h1>
+      {lede && <p class="bs-article__lede">{lede}</p>}
+      <p class="bs-article__byline">
+        <span>By {authors.join(', ')}</span>
+        <time datetime={date_created.toISOString().slice(0, 10)}>{readingDate(date_created)}</time>
+      </p>
+
+      <article class="bs-article__body bs-prose">
+        <AstroMarkdown node={tree} />
+      </article>
+
+      <div class="bs-article__sources">
+        <Sources citations={citations} />
+      </div>
+    </main>
+
+    <Colophon name={BRAND.name} domain={BRAND.domain} connect={CONNECT} reading={reading} disclaimer={DISCLAIMER} />
+  </div>
+</BaseThemeLayout>
